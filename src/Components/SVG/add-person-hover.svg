@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="18px" viewBox="0 0 24 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>add-person-hover</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="add-person-hover" transform="translate(0.999992, 1.000000)" stroke="#646896">
+            <g id="body" fill="#646896">
+                <ellipse id="Oval" cx="9.50000759" cy="3.5" rx="3" ry="3.5"></ellipse>
+                <path d="M19,14.4879448 C19,12.2027767 14.7467127,10.3502819 9.5,10.3502819 C4.25330247,10.3502819 0,12.2027767 0,14.4879448 C0,15.1578269 0.551417323,16.3503319 1.01438505,16.3503319 C1.47735278,16.3503319 17.3890443,16.3503319 17.9658203,16.3503319 C18.5425963,16.3502319 19,15.1654293 19,14.4879448 Z" id="Oval"></path>
+            </g>
+            <g id="plus" transform="translate(16.000008, 1.000000)" stroke-linecap="square">
+                <line x1="3.5" y1="0.5" x2="3.5" y2="6.5" id="Line"></line>
+                <line x1="6.5" y1="3.5" x2="0.5" y2="3.5" id="Line-2"></line>
+            </g>
+        </g>
+    </g>
+</svg>
