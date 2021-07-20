@@ -1,3 +1,5 @@
+import { createTaskContent } from './task.js';
+
 // const inboxSVG = require('../Components/SVG/inbox-file.svg');
 
 const createAddTask = () => {
@@ -25,6 +27,7 @@ const createAddTask = () => {
 const createInbox = () => {
   const inboxContainer = document.createElement('div');
   inboxContainer.setAttribute('id', 'inbox-container');
+  inboxContainer.setAttribute('data-nav', 'inbox');
 
   const inboxIcon = document.createElement('div');
   inboxIcon.setAttribute('class', 'icon-menu');
@@ -37,8 +40,11 @@ const createInbox = () => {
   countContainer.setAttribute('class', 'count-container');
   
   const inboxCount = document.createElement('p');
-  inboxCount.setAttribute('class', 'task-count');
+  inboxCount.setAttribute('class', 'count');
   inboxCount.textContent = '2';
+
+  // inboxContainer.addEventListener('click', createInboxContent);
+  
   
   countContainer.appendChild(inboxCount)
   inboxContainer.appendChild(inboxIcon);
@@ -52,6 +58,7 @@ const createInbox = () => {
 const createToday = () => {
   const todayContainer = document.createElement('div');
   todayContainer.setAttribute('id', 'today-container');
+  todayContainer.setAttribute('data-nav', 'today');
   
   const todayIcon = document.createElement('div');
   todayIcon.setAttribute('class', 'icon-menu');
@@ -64,18 +71,20 @@ const createToday = () => {
   
   todayContainer.appendChild(todayIcon);
   todayContainer.appendChild(todayLabel);
-
+  
+  todayContainer.addEventListener('click', createTaskContent);
+  
   return todayContainer;
 }
 
 const createNextSeven = () => {
   const nextSevenContainer = document.createElement('div');
   nextSevenContainer.setAttribute('id', 'next-seven-container');
+  nextSevenContainer.setAttribute('data-nav', 'next-seven');
   
   const nextSevenIcon = document.createElement('div');
   nextSevenIcon.setAttribute('class', 'icon-menu');
   nextSevenIcon.setAttribute('id', 'next-seven-icon');
-  // nextSevenIcon.backgroundImage = url('/Components/SVG/')
   
   
   const nextSevenLabel = document.createElement('p');
@@ -83,6 +92,8 @@ const createNextSeven = () => {
 
   nextSevenContainer.appendChild(nextSevenIcon);
   nextSevenContainer.appendChild(nextSevenLabel);
+
+  // nextSevenContainer.addEventListener('click', createContent);
 
   return nextSevenContainer;
 }
