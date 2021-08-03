@@ -1,3 +1,5 @@
+@import '~js-datepicker/dist/datepicker.min.css';
+
 * {
   margin: 0;
   padding: 0;
@@ -18,7 +20,10 @@ h2 {
   font-weight: 500;
 }
 
-/* classes */
+
+/* CLASSES -repeating elements*/
+
+/* menu */
 .count-container {
   display: flex;
   align-items: center;
@@ -60,48 +65,123 @@ h2 {
   width: 35px;
 }
 
+
+/* add task form */
+
+.hide {
+  max-height: 0 !important;
+}
+
+.dropdown{
+  border: 0.1em solid rgb(194, 194, 194);
+  width: 10em;
+  margin-bottom: 1em;
+  background-color: white;
+}
+
+.dropdown .title{
+  margin: .3em .3em .3em .3em;	
+  width: 100%;
+}
+
+.dropdown .title .fa-angle-right{
+  float: right;
+  margin-right: .7em;
+  margin-top: .2em;
+  transition: transform .3s;
+}
+
+.dropdown .menu{
+  transition: max-height .5s ease-out;
+  max-height: 20em;
+  overflow: hidden;
+}
+
+.dropdown .menu .option{
+  margin: .3em .3em .3em .3em;
+  margin-top: 0.3em;
+}
+
+.dropdown .menu .option:hover{
+  background: rgba(83, 81, 81, 0.2);
+}
+
+/* .dropdown .menu .option:active {
+  background-color: hotpink;
+} */
+
+.pointer-cursor:hover{
+  cursor: pointer;
+}
+
+.rotate-90{
+  transform: rotate(90deg);
+}
+
+.button {
+  background-color: white;
+  border: none;
+  font-family: sans-serif;
+  font-size: 1em;
+  padding: .6em 2em;
+  margin: 0 1em;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: rgb(221, 221, 221);
+}
+
+
+/* task element */
 .task-element {
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
   flex-direction: row;
   padding-left: 10px;
-  min-width: 100%;
+  max-width: 100%;
   height: 50px;
+  overflow: hidden;
   border-bottom: 1px solid rgb(231, 231, 231);
 }
 
-.task-element:hover {
-  background-color: rgb(241, 241, 241);
+.delete, .edit {
+  display: flex;
+  height: 50px;
+  width: 50px;
+  opacity: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  transition: opacity .7s ease-in-out;
+}
+.delete {
+  background-image: url('/src/Components/SVG/trash-can.svg');
+  margin-right: 2em;
 }
 
-.task-hover-element {
-  width: 99%;
-  height: 1px;
-  margin-top: -1px;
-  margin-left: 10px;
+.edit {
+  background-image: url('/src/Components/SVG/edit-pencil.svg');
 }
 
-.task-hover-element:hover {
-  border-style: none;
+.delete:hover, .edit:hover {
+  background-color: rgb(243, 243, 243);
 }
 
-.task-label-container, .task-attributes-container {
+.task-label-container {
   display: flex;
   align-items: center;
   justify-content: flex-start;
   max-height: 50px;
+  pointer-events: none;
 }
 
 .task-attributes-container {
-  justify-content: flex-end;
-}
-
-.task-item-container {
-  height: 50px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
+  max-height: 50px;
 }
 
 .task-category-container {
@@ -110,30 +190,22 @@ h2 {
   color: rgb(121, 121, 121);
 }
 
-.task-icon-container, .task-status-container, .task-avatar-container {
+.task-icon-container {
   display: flex;
-  width: 50px;
-  max-width: 30px;
+  max-width: 50px;
   max-height: 50px;
 }
 
-.task-icon-container {
+.team, .person, .avatar {
+  pointer-events: none;
   display: none;
   background-position: center;
   background-repeat: no-repeat;
-  background-image: url('/src/Components/SVG/task-icon.svg');
+  background-image: url('/src/Components/SVG/team-icon.svg');
 }
 
-.task-status-container {
-  display: flex;
-}
-
-.task-avatar-container {
-  display: none;
-}
-
-
-/* IDs */
+/* IDs - unique elements*/
+/* header */
 #header {
   height: 60px;
   width: 100vw;
@@ -181,18 +253,11 @@ h2 {
   flex-direction: row;
   font-family: sans-serif;
   margin: 10px 0 40px 20px;
+  cursor: pointer;
 }
 
-#add-task-form-container {
-  min-width: 100%;
-  height: 500px;
-  display: flex;
-  background-color: rgb(212, 212, 212);
-}
-
-#add-task-form {
-  min-width: 100%;
-}
+/* MENU */
+/* add task element */
 
 #add-task-icon-container {
   height: 40px;
@@ -209,21 +274,20 @@ h2 {
   font-weight: 100;
   font-size: 44px;
   color: white;
+  transition: transform 0.3s ease-out;
+}
+
+#add-task-icon:hover {
+  transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
 }
 
 #add-task-label {
   margin-left: 20px;
+  padding-right: 100px;
 }
 
-#task-name-label {
-  padding-right: 5px;
-}
-
-#category-ul {
-  list-style: none;
-  background-color: rgb(190, 248, 229);
-}
-
+/* other menu elements */
 #inbox-container, #today-container, #next-seven-container {
   display: inline-flex;
   align-items: center;
@@ -265,8 +329,8 @@ h2 {
   background-image: url('/src/Components/SVG/next-seven.svg');
 }
 
+/* CONTENT */
 
-/* main content */
 #content-wrapper {
   min-height: calc(100vh - 60px);
   width: calc(100vw - 300px);
@@ -280,6 +344,7 @@ h2 {
   flex-direction: column;
 }
 
+/* header */
 #content-header-container {
   display: inline-flex;
   align-items: flex-start;
@@ -287,6 +352,19 @@ h2 {
   flex-direction: row;
   min-width: 100%;
   margin-bottom: 25px;
+}
+
+#today-header-label-container {
+  display: flex;
+  align-items: baseline;
+  flex-direction: row;
+}
+
+#today-header-date {
+  margin-left: .5em;
+  margin-top: .5em;
+  font-weight: 300;
+  color: #5c5c5c;
 }
 
 #icons-container {
@@ -317,10 +395,136 @@ h2 {
   background-image: url('/src/Components/SVG/chat-bubble-hover.svg');
 }
 
+/* tasks */
 #task-wrapper {
   min-width: 100%;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
+}
+
+/* add task form */
+#add-task-form-container {
+  min-width: 100%;
+  height: 500px;
+  display: none;
+  border: none;
+  background-color: rgb(245, 245, 245);
+  position: relative;
+  margin-bottom: 2em;
+}
+
+#add-task-form-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  position: absolute;
+  bottom: 30px;
+  width: 100%;
+}
+
+#add-task-form {
+  min-width: 100%;
+  padding: 50px;
+  position: absolute;
+}
+
+#task-name-label {
+  padding-right: 5px;
+}
+
+#category-ul {
+  list-style: none;
+  background-color: rgb(190, 248, 229);
+}
+
+#add-task-top-line-container {
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  background-color: white;
+  margin-bottom: 2.5em;
+  border: 1px solid rgb(207, 207, 207);
+}
+
+#add-task-input {
+  display: block;
+  border: none;
+  outline: none;
+  height: 36px;
+  min-width: 700px;
+  padding-left: 1em;
+  padding-top: .5em;
+  background-color: white;
+  font-size: 1em;
+}
+
+#task-input::-webkit-input-placeholder {
+  font-family: sans-serif;
+  font-size: 16px;
+}
+
+#task-date {
+  width: 250px;
+  height: 36px;
+  font-family: sans-serif;
+  font-size: .9em;
+  display: flex;
+  justify-content: flex-end;
+  background-color: rgba(255, 255, 255, 0);
+  padding-left: 3em;
+  padding-top: .3em;
+  margin-right: 2em;
+  color: #808080;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  background-image: url('/src/Components/SVG/calendar-choose.svg');
+  background-repeat: no-repeat;
+  background-position: right;
+}
+
+#date-input-container {
+  display: inline-flex;
+  align-items: center;
+  flex-direction: row;
+  width: 250px;
+}
+
+#date-input-container:hover {
+  background-color: rgba(240, 240, 240, 0.322);
+}
+
+#add-task-description-container {
+  width: 100%;
+  min-height: 100px;
+  border: 1px solid rgb(207, 207, 207);
+  background-color: white;
+  margin-bottom: 2.5em;
+  padding: .3em 1em;
+  line-height: 2em;
+  display: flex;
+  align-items: flex-start;
+}
+
+#add-task-description-input {
+  border: none;
+  outline: none;
+  display: block;
+  overflow-x: hidden;
+  overflow-y: auto;
+  min-height: 95px;
+  width: 100%;
+  font-size: 1em;
+}
+
+.textarea {
+  font-size: 1em;
+  font-family: sans-serif;
+  outline: none;  
+  overflow: hidden;
+  resize: none;
 }

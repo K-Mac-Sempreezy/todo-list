@@ -1,36 +1,52 @@
-const createTodayHeader = () => {
-  const container = createtodayHeaderContainer();
-  const label = createContentLabel();
+import format from 'date-fns/format';
+
+const createContentHeader = (headerLabel) => {
+  const headerContainer = createHeaderContainer();
+  const labelContainer = createLabelContainer();
+  const label = createContentLabel(headerLabel);
+  const date = createDate();
   const iconsContainer = createIconsContainer();
   const personIcon = createPersonIcon();
   const chatIcon = createChatIcon();
   const settingsIcon = createSettingsIcon();
 
-  // document
-  //   .getElementById('content-wrapper')
-  //   .insertBefore(
-  //     container,
-  //     document.getElementById('add-task-form-container')
-  //   );
-  container.appendChild(label);
+  headerContainer.appendChild(labelContainer);
+  labelContainer.appendChild(label);
+  headerContainer.appendChild(date);
   iconsContainer.appendChild(personIcon);
   iconsContainer.appendChild(chatIcon);
   iconsContainer.appendChild(settingsIcon);
-  container.appendChild(iconsContainer);
-  return container;
+  headerContainer.appendChild(iconsContainer);
+  return headerContainer;
 };
 
-const createtodayHeaderContainer = () => {
+const createHeaderContainer = () => {
   const todayHeaderContainer = document.createElement('div');
   todayHeaderContainer.setAttribute('id', 'content-header-container');
   return todayHeaderContainer;
 };
 
-const createContentLabel = () => {
+const createLabelContainer = () => {
+  const container = document.createElement('div');
+  container.setAttribute('id', 'today-header-label-container');
+  return container;
+}
+
+
+const createContentLabel = (headerLabel) => {
   const contentLabel = document.createElement('h2');
-  contentLabel.textContent = 'Today';
+  contentLabel.textContent = headerLabel;
   return contentLabel;
 };
+
+const createDate = () => {
+  const date = document.createElement('div');
+  // const rightNow = format(new Date(), 'dddd');
+  const now = format(new Date(), 'MMM do, yyyy');
+  date.setAttribute('id', 'today-header-date');
+  date.textContent = now;
+  return date;
+}
 
 const createIconsContainer = () => {
   const iconsContainer = document.createElement('div');
@@ -59,4 +75,4 @@ const createSettingsIcon = () => {
   return settingsIcon;
 };
 
-export { createTodayHeader };
+export { createContentHeader };

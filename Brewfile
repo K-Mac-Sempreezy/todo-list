@@ -1,0 +1,5 @@
+tap "homebrew/bundle"
+tap "homebrew/core"
+tap "sass/sass"
+brew "git"
+brew "wget"
