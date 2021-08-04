@@ -41,7 +41,6 @@ const createContentLabel = (headerLabel) => {
 
 const createDate = () => {
   const date = document.createElement('div');
-  // const rightNow = format(new Date(), 'dddd');
   const now = format(new Date(), 'MMM do, yyyy');
   date.setAttribute('id', 'today-header-date');
   date.textContent = now;

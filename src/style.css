@@ -352,6 +352,7 @@ h2 {
   flex-direction: row;
   min-width: 100%;
   margin-bottom: 25px;
+  z-index: 10;
 }
 
 #today-header-label-container {

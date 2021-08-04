@@ -35,6 +35,7 @@ const createInboxIcon = () => {
 
 const createInboxLabel = () => {
   const inboxLabel = document.createElement('p');
+  inboxLabel.setAttribute('id', 'menu-inbox-label');
   inboxLabel.textContent = 'Inbox';
   return inboxLabel;
 };
@@ -48,6 +49,7 @@ const createCountContainer = () => {
 const createInboxCount = () => {
   const inboxCount = document.createElement('p');
   inboxCount.setAttribute('class', 'count');
+  inboxCount.setAttribute('id', 'menu-inbox-count');
   inboxCount.textContent = myTasks.length;
   return inboxCount;
 };

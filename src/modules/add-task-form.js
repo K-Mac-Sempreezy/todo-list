@@ -1,11 +1,9 @@
 import datepicker from 'js-datepicker';
-import format from 'date-fns/format';
 import { library, dom } from '@fortawesome/fontawesome-svg-core';
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons/faAngleRight';
-import { myTasks, Task } from './initial-load';
-import { createTask, populateTasks } from './task';
+import { populateTasks } from './task';
 
-const options = ['Personal', 'Work', 'Hobby', 'Learning'];
+let options = ['Personal', 'Work', 'Hobby', 'Learning'];
 
 const createAddTaskForm = () => {
   const addTaskFormContainer = createAddTaskFormContainer();
@@ -14,7 +12,6 @@ const createAddTaskForm = () => {
   const taskNameInput = createTaskNameInput();
   const inputContainer = createInputContainer();
   const dateInput = createDateInput();
-  // const calendar = createCalendar();
   const descriptionContainer = createDescrptionContainer();
   const dateInputContainer = createDateInputContainer();
   const descriptionInput = createDescriptionInput();
@@ -29,7 +26,6 @@ const createAddTaskForm = () => {
   topLineContainer.appendChild(taskNameInput);
   topLineContainer.appendChild(inputContainer);
   dateInputContainer.appendChild(dateInput);
-  // dateInputContainer.appendChild(calendar);
   inputContainer.appendChild(dateInputContainer);
   formElement.appendChild(topLineContainer);
   descriptionContainer.appendChild(descriptionInput);
@@ -44,6 +40,7 @@ const createAddTaskForm = () => {
   addTaskFormContainer.appendChild(buttonContainer);
   return addTaskFormContainer;
 };
+
 
 
 const createAddTaskFormContainer = () => {
@@ -93,13 +90,6 @@ const createDateInput = () => {
   dateInput.addEventListener('click', dateSelect);
   return dateInput;
 };  
-
-const dateSelect = (e) => {
-  const picker = datepicker('#task-date');
-  e.stopPropagation();
-  const isHidden = picker.calendarContainer.classList.contains('qs-hidden');
-  picker[isHidden ? 'show' : 'hide']();
-}
 
 const createDescrptionContainer = () => {
   const descriptionContainer = document.createElement('div');
@@ -169,14 +159,6 @@ const createCancelButton = () => {
   return cancelButton;
 };
 
-const addTaskFormCancelHandler = () => {
-  document.getElementById('add-task-form-container').style.display = 'none';
-  document.getElementById('add-task-input').value = '';
-  document.getElementById('task-date').value = '';
-  document.getElementById('add-task-description-input').value = '';
-  document.getElementById('dropdown-title').textContent = 'Category';
-}
-
 const createSubmitButton = () => {
   const submitButton = document.createElement('button');
   submitButton.setAttribute('class', 'button');
@@ -201,10 +183,18 @@ const toggleClass = (elem, className) => {
 const toggleMenuDisplay = () => {
   const menu = document.getElementById('option-container');
   const icon = document.getElementById('dropdown-icon');
-
+  
   toggleClass(menu, 'hide');
   toggleClass(icon, 'rotate-90');
 };
+
+const addTaskFormCancelHandler = () => {
+  document.getElementById('add-task-form-container').style.display = 'none';
+  document.getElementById('add-task-input').value = '';
+  document.getElementById('task-date').value = '';
+  document.getElementById('add-task-description-input').value = '';
+  document.getElementById('dropdown-title').textContent = 'Category';
+}
 
 const handleOptionSelected = (e) => {
   toggleClass(e.target.parentNode, 'hide');
@@ -218,7 +208,19 @@ const handleOptionSelected = (e) => {
   titleElem.appendChild(icon);
 };
 
+const handleTaskContainerDisplay = () => {
+  const container = document.getElementById('add-task-form-container');
+  container.style.display = 'flex';
+}
+
+const dateSelect = (e) => {
+  const picker = datepicker('#task-date');
+  e.stopPropagation();
+  const isHidden = picker.calendarContainer.classList.contains('qs-hidden');
+  picker[isHidden ? 'show' : 'hide']();
+}
+
 library.add(faAngleRight);
 dom.watch();
 
-export { createAddTaskForm, addTaskFormCancelHandler };
+export { createAddTaskForm, addTaskFormCancelHandler, handleTaskContainerDisplay };

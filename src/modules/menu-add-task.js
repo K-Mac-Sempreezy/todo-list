@@ -1,3 +1,5 @@
+import { handleTaskContainerDisplay } from "./add-task-form";
+
 const createAddTaskMenu = () => {
   const container = createAddTaskMenuContainer();
   const iconContainer = createAddIconContainer();
@@ -13,15 +15,10 @@ const createAddTaskMenu = () => {
 const createAddTaskMenuContainer = () => {
   const addTaskContainer = document.createElement('div');
   addTaskContainer.setAttribute('id', 'add-task-container');
-  addTaskContainer.addEventListener('click', () => {
-    if (document.getElementById('add-task-form-container').style.display = 'flex'){
-      return;
-    } else {
-      document.getElementById('add-task-form-container').style.display = 'flex';
-    };
-  });
+  addTaskContainer.addEventListener('click', handleTaskContainerDisplay);
   return addTaskContainer;
 };
+
 
 const createAddIconContainer = () => {
   const addIconContainer = document.createElement('div');

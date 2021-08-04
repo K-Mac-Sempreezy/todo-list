@@ -1,6 +1,7 @@
 import { createTaskContent } from './task';
 import { myTasks } from './initial-load';
 import format from 'date-fns/format';
+import { updateMenu } from './menu';
 
 const createTodayMenu = () => {
   const todayContainer = createTodayContainer();
@@ -17,8 +18,8 @@ const createTodayMenu = () => {
 const createTodayContainer = () => {
   const todayContainer = document.createElement('div');
   todayContainer.setAttribute('id', 'today-container');
-  todayContainer.setAttribute('data-nav', 'today');
   todayContainer.addEventListener('click', createTaskContent);
+  todayContainer.addEventListener('click', updateMenu);
   return todayContainer;
 };
 
@@ -31,6 +32,7 @@ const createTodayIcon = () => {
 
 const createTodayLabel = () => {
   const todayLabel = document.createElement('p');
+  todayLabel.setAttribute('id', 'menu-today-label');
   todayLabel.textContent = 'Today';
   todayLabel.style.fontWeight = '700';
   return todayLabel;
@@ -38,6 +40,7 @@ const createTodayLabel = () => {
 
 const createTodayCount = () => {
   const count = document.createElement('div');
+  count.setAttribute('id', 'menu-today-count');
   count.setAttribute('class', 'count');
   const tasks = myTasks.filter(
     (task) =>

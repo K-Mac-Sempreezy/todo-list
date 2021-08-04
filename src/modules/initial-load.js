@@ -4,6 +4,10 @@ import { createTask, createTaskWrapper } from './task.js';
 import { createContentHeader } from './content-header.js';
 import { createAddTaskForm } from './add-task-form.js';
 
+let myTasks = JSON.parse(localStorage.getItem('myTasks') || '[]');
+let isFirstTime = JSON.parse(localStorage.getItem('isFirstTime') || '');
+// let initialLoadPageView = 'today';
+
 class Task {
   constructor(
     date,
@@ -25,9 +29,6 @@ class Task {
     this.avatar = avatar;
   }
 }
-
-let myTasks = JSON.parse(localStorage.getItem('myTasks') || '[]');
-let isFirstTime = JSON.parse(localStorage.getItem('isFirstTime'));
 
 const createHeader = () => {
   const header = document.createElement('header');
@@ -51,7 +52,7 @@ const createContentWrapper = () => {
 const createDefaultVariables = () => {
   const date = new Date();
   const defaultTasks = [
-    new Task (
+    new Task(
       date,
       'rgb(121, 121, 121)',
       '12:30 Lunch with Sarah',
@@ -60,40 +61,34 @@ const createDefaultVariables = () => {
       'rgb(255, 255, 0)'
     ),
 
-    new Task (
+    new Task(
       date,
       'rgb(25, 150, 15)',
       '2:30 Call Luis',
       'Check in about new project',
       'work',
-      '#236abd',
+      '#236abd'
     ),
   ];
 
-  
-  // myTasks = [];
   if (myTasks.length <= 0 && isFirstTime === '') {
-    defaultTasks.forEach(task => myTasks.push(task));
+    defaultTasks.forEach((task) => myTasks.push(task));
     isFirstTime = false;
-    console.log(isFirstTime)
-  };
- 
+  }
+
   localStorage.setItem('myTasks', JSON.stringify(myTasks));
   localStorage.setItem('isFirstTime', JSON.stringify(isFirstTime));
-  
 };
-
-
 
 const createDefaultContent = () => {
   //if no tasks created (ie. first time opening app)
-  
+
   createDefaultVariables();
   const contentWrapper = createContentWrapper();
   const todayHeader = createContentHeader('Today');
   const addTaskForm = createAddTaskForm();
   const taskWrapper = createTaskWrapper();
-  
+
   myTasks.forEach((task, index) => {
     taskWrapper.appendChild(createTask(task, index));
   });
@@ -107,7 +102,7 @@ const createDefaultContent = () => {
 
 const pageLoad = () => {
   const header = createHeader();
-  const menu = createMenu();
+  const menu = createMenu(initialLoadPageView);
   const defaultContent = createDefaultContent();
 
   document.body.appendChild(header);

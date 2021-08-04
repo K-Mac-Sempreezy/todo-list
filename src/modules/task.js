@@ -1,40 +1,11 @@
 import { createContentHeader } from './content-header.js';
 import { myTasks, Task } from './initial-load';
-import { createAddTaskForm, addTaskFormCancelHandler } from './add-task-form.js';
+import {
+  createAddTaskForm,
+  addTaskFormCancelHandler,
+} from './add-task-form.js';
 import format from 'date-fns/format';
-
-const populateTasks = () => {
-  const date = document.getElementById('task-date').value;
-  const label = document.getElementById('add-task-input').value;
-  const priorityColor = '#236abd'; //default color for now
-  const categoryColor = '#236abd'; //default color for now
-  const description = document.getElementById(
-    'add-task-description-input'
-  ).value;
-  const category = document
-    .getElementById('dropdown-title')
-    .textContent.toLowerCase();
-
-  const taskObject = new Task(
-    date,
-    priorityColor,
-    label,
-    description,
-    category,
-    categoryColor
-  );
-
-  const taskWrapper = document.getElementById('task-wrapper');
-  while (taskWrapper.firstElementChild) {
-    taskWrapper.firstElementChild.remove();
-  }
-  myTasks.push(taskObject);
-  myTasks
-    .sort((a, b) => new Date(a.date) - new Date(b.date))
-    .forEach((task, index) => taskWrapper.appendChild(createTask(task, index)));
-  localStorage.setItem('myTasks', JSON.stringify(myTasks));
-  addTaskFormCancelHandler();
-};
+import { editTask } from 'edit-task.js';
 
 const createTaskContent = (e) => {
   const contentWrapper = document.getElementById('content-wrapper');
@@ -63,7 +34,7 @@ const createTaskContent = (e) => {
     tasks.forEach((task) => {
       taskWrapper.appendChild(createTask(task));
     });
-    contentWrapper.appendChild(createContentHeader());
+    contentWrapper.appendChild(createContentHeader('Today'));
   } else if (e.target.id === 'next-seven-container') {
     const tasks = myTasks.filter(
       (task) =>
@@ -73,11 +44,12 @@ const createTaskContent = (e) => {
     tasks.forEach((task) => {
       taskWrapper.appendChild(createTask(task));
     });
+    contentWrapper.appendChild(createContentHeader('Next 7 Days'));
   }
 
   contentWrapper.appendChild(createAddTaskForm());
   contentWrapper.appendChild(taskWrapper);
-};;
+};
 
 const createTaskWrapper = () => {
   const taskWrapper = document.createElement('div');
@@ -86,7 +58,7 @@ const createTaskWrapper = () => {
 };
 
 const createTask = (taskObject, index) => {
-  let {date, priorityColor, label, category, categoryColor, person, avatar} =
+  let { date, priorityColor, label, category, categoryColor, person, avatar } =
     taskObject;
   const taskElement = createTaskElement(index);
   const taskLabelContainer = createTaskLabelContainer(
@@ -115,29 +87,6 @@ const createTaskElement = (index) => {
   taskElement.addEventListener('mouseover', opacity1);
   taskElement.addEventListener('mouseleave', opacity0);
   return taskElement;
-};
-
-const opacity1 = (e) => {
-  document.getElementById(
-    `task-delete-${findElementDataKey(e)}`
-  ).style.opacity = 1;
-  document.getElementById(
-    `task-edit-${findElementDataKey(e)}`
-  ).style.opacity = 1;
-};
-
-const opacity0 = (e) => {
-  document.getElementById(
-    `task-delete-${findElementDataKey(e)}`
-  ).style.opacity = 0;
-  document.getElementById(
-    `task-edit-${findElementDataKey(e)}`
-  ).style.opacity = 0;
-};
-
-const findElementDataKey = (e) => {
-  let key = e.target.dataset.key;
-  return key;
 };
 
 const createTaskLabelContainer = (priority, label, index) => {
@@ -197,7 +146,7 @@ const createPriority = (priorityColor, index) => {
   const circleContainer = document.createElementNS(
     'http://www.w3.org/2000/svg',
     'svg'
-    );
+  );
   circleContainer.classList.add('task-priority');
   circleContainer.setAttribute('id', `task-priority-${index}`);
   circleContainer.dataset.key = index;
@@ -311,35 +260,59 @@ const createTaskAttributesContainer = (index) => {
   return taskAttributesContainer;
 };
 
-const editTask = (e) => {
-  // const task = myTasks.
+const opacity1 = (e) => {
+  document.getElementById(
+    `task-delete-${findElementDataKey(e)}`
+  ).style.opacity = 1;
+  document.getElementById(
+    `task-edit-${findElementDataKey(e)}`
+  ).style.opacity = 1;
+};
 
-  // });
+const opacity0 = (e) => {
+  document.getElementById(
+    `task-delete-${findElementDataKey(e)}`
+  ).style.opacity = 0;
+  document.getElementById(
+    `task-edit-${findElementDataKey(e)}`
+  ).style.opacity = 0;
+};
 
-  const key = e.target.dataset.key;
-  // const date = ;
-  // const priority = document.getElementById(`task-priority-${key}`).nodeValue;
-  // const description = ;
-  // const label = document.getElementById(`task-label-${key}`).textContent;
-  // const category = ; 
-  console.log({key, label})
+const findElementDataKey = (e) => {
+  let key = e.target.dataset.key;
+  return key;
+};
 
-  const formDate = document.getElementById('task-date');
-  const formLabel = document.getElementById('add-task-input');
-  const formDescription = document.getElementById('add-task-description-input');
-  const formCategory = document.getElementById('dropdown-title');
+const populateTasks = () => {
+  const date = document.getElementById('task-date').value;
+  const label = document.getElementById('add-task-input').value;
+  const priorityColor = '#236abd'; //default color for now
+  const categoryColor = '#236abd'; //default color for now
+  const description = document.getElementById(
+    'add-task-description-input'
+  ).value;
+  const category = document
+    .getElementById('dropdown-title')
+    .textContent.toLowerCase();
 
+  const taskObject = new Task(
+    date,
+    priorityColor,
+    label,
+    description,
+    category,
+    categoryColor
+  );
 
- 
-
-  // const taskObject = new Task(
-  //   date,
-  //   priorityColor,
-  //   label,
-  //   description,
-  //   category,
-  //   categoryColor
-  // );
-}
-
+  const taskWrapper = document.getElementById('task-wrapper');
+  while (taskWrapper.firstElementChild) {
+    taskWrapper.firstElementChild.remove();
+  }
+  myTasks.push(taskObject);
+  myTasks
+    .sort((a, b) => new Date(a.date) - new Date(b.date))
+    .forEach((task, index) => taskWrapper.appendChild(createTask(task, index)));
+  localStorage.setItem('myTasks', JSON.stringify(myTasks));
+  addTaskFormCancelHandler();
+};
 export { createTask, createTaskWrapper, createTaskContent, populateTasks };

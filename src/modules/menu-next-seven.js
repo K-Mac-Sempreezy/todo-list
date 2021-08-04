@@ -1,3 +1,6 @@
+import { updateMenu } from "./menu";
+import { createTaskContent } from "./task";
+
 const createNextSevenMenu = () => {
   const nextSevenContainer = createNextSevenContainer();
   const nextSevenIcon = createNextSevenIcon();
@@ -6,7 +9,8 @@ const createNextSevenMenu = () => {
   nextSevenContainer.appendChild(nextSevenIcon);
   nextSevenContainer.appendChild(nextSevenLabel);
 
-  // nextSevenContainer.addEventListener('click', createContent);
+  nextSevenContainer.addEventListener('click', createTaskContent);
+  nextSevenContainer.addEventListener('click', updateMenu);
 
   return nextSevenContainer;
 };
@@ -27,6 +31,7 @@ const createNextSevenIcon = () => {
 
 const createNextSevenLabel = () => {
   const nextSevenLabel = document.createElement('p');
+  nextSevenLabel.setAttribute('id', 'menu-seven-label');
   nextSevenLabel.textContent = 'Next 7 Days';
   return nextSevenLabel;
 };
