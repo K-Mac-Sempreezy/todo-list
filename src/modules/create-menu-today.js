@@ -1,12 +1,11 @@
-import { createTaskContent } from './task';
-import { myTasks } from './initial-load';
-import format from 'date-fns/format';
-import { updateMenu } from './menu';
+import { createTaskContent } from './create-task.js';
+import { updateMenu } from './update-UI.js';
+import { todayTaskFilter } from './edit-task.js';
 
-const createTodayMenu = () => {
+const createTodayMenu = (initialLoadPageLabel) => {
   const todayContainer = createTodayContainer();
   const todayIcon = createTodayIcon();
-  const todayLabel = createTodayLabel();
+  const todayLabel = createTodayLabel(initialLoadPageLabel);
   const count = createTodayCount();
 
   todayContainer.appendChild(todayIcon);
@@ -30,11 +29,13 @@ const createTodayIcon = () => {
   return todayIcon;
 };
 
-const createTodayLabel = () => {
+const createTodayLabel = (initialLoadPageLabel) => {
   const todayLabel = document.createElement('p');
   todayLabel.setAttribute('id', 'menu-today-label');
   todayLabel.textContent = 'Today';
-  todayLabel.style.fontWeight = '700';
+  if (initialLoadPageLabel === 'Today') {
+    todayLabel.style.fontWeight = '700';
+  }
   return todayLabel;
 };
 
@@ -42,13 +43,10 @@ const createTodayCount = () => {
   const count = document.createElement('div');
   count.setAttribute('id', 'menu-today-count');
   count.setAttribute('class', 'count');
-  const tasks = myTasks.filter(
-    (task) =>
-      format(new Date(task.date), 'MMM do yyyy') ===
-      format(new Date(), 'MMM do yyyy')
-  );
-  count.textContent = tasks.length;
+  count.textContent = todayTaskFilter().length;
   return count;
 };
 
 export { createTodayMenu };
+
+

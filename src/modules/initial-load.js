@@ -1,53 +1,16 @@
 import '/src/style.css';
-import { createMenu } from './menu.js';
-import { createTask, createTaskWrapper } from './task.js';
-import { createContentHeader } from './content-header.js';
-import { createAddTaskForm } from './add-task-form.js';
+import { createMenu } from './create-menu.js';
+import { createTask } from './create-task.js';
+import { Task } from './class-task.js';
+import { createHeader } from './create-header.js'
+import { createElement } from './create-element.js';
+import { createContentHeader } from './create-content-header.js';
+import { createAddTaskForm } from './create-add-task-form.js';
+import { setCurrentPageView } from './edit-task.js';
 
 let myTasks = JSON.parse(localStorage.getItem('myTasks') || '[]');
 let isFirstTime = JSON.parse(localStorage.getItem('isFirstTime') || '');
-// let initialLoadPageView = 'today';
-
-class Task {
-  constructor(
-    date,
-    priorityColor,
-    label,
-    description,
-    category,
-    categoryColor,
-    person = false,
-    avatar = false
-  ) {
-    this.date = date;
-    this.priorityColor = priorityColor;
-    this.label = label;
-    this.description = description;
-    this.category = category;
-    this.categoryColor = categoryColor;
-    this.person = person;
-    this.avatar = avatar;
-  }
-}
-
-const createHeader = () => {
-  const header = document.createElement('header');
-  header.setAttribute('id', 'header');
-
-  const logo = document.createElement('h3');
-  logo.setAttribute('id', 'header-logo');
-  logo.textContent = 'todo-it';
-
-  header.appendChild(logo);
-
-  return header;
-};
-
-const createContentWrapper = () => {
-  const contentWrapper = document.createElement('div');
-  contentWrapper.setAttribute('id', 'content-wrapper');
-  return contentWrapper;
-};
+let initialLoadPageLabel = 'Inbox'; //or 'Next 7 Days', or 'Today'
 
 const createDefaultVariables = () => {
   const date = new Date();
@@ -80,34 +43,40 @@ const createDefaultVariables = () => {
   localStorage.setItem('isFirstTime', JSON.stringify(isFirstTime));
 };
 
-const createDefaultContent = () => {
-  //if no tasks created (ie. first time opening app)
+const createContent = () => {
+
+ const contentWrapper = createElement('div', {
+    id: 'content-wrapper',
+  });  
+  
+  const taskWrapper = createElement('div', {
+    id: 'task-wrapper',
+  });
+
+  const contentHeader = createContentHeader(initialLoadPageLabel);
+  const addTaskForm = createAddTaskForm();
 
   createDefaultVariables();
-  const contentWrapper = createContentWrapper();
-  const todayHeader = createContentHeader('Today');
-  const addTaskForm = createAddTaskForm();
-  const taskWrapper = createTaskWrapper();
-
+  setCurrentPageView(initialLoadPageLabel);
+  
   myTasks.forEach((task, index) => {
     taskWrapper.appendChild(createTask(task, index));
   });
 
-  contentWrapper.appendChild(todayHeader);
+  contentWrapper.appendChild(contentHeader);
   contentWrapper.appendChild(addTaskForm);
   contentWrapper.appendChild(taskWrapper);
-
   return contentWrapper;
 };
 
 const pageLoad = () => {
   const header = createHeader();
-  const menu = createMenu(initialLoadPageView);
-  const defaultContent = createDefaultContent();
-
+  const menu = createMenu(initialLoadPageLabel);
+  const content = createContent();
+  
   document.body.appendChild(header);
   document.body.appendChild(menu);
-  document.body.appendChild(defaultContent);
+  document.body.appendChild(content);
 };
 
-export { pageLoad, myTasks, Task };
+export { createElement, pageLoad, myTasks, Task };

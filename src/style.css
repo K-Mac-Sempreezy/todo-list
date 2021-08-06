@@ -1,4 +1,4 @@
-@import '~js-datepicker/dist/datepicker.min.css';
+@import "~js-datepicker/dist/datepicker.min.css";
 
 * {
   margin: 0;
@@ -19,7 +19,6 @@ body {
 h2 {
   font-weight: 500;
 }
-
 
 /* CLASSES -repeating elements*/
 
@@ -65,44 +64,43 @@ h2 {
   width: 35px;
 }
 
-
 /* add task form */
 
 .hide {
   max-height: 0 !important;
 }
 
-.dropdown{
+.dropdown {
   border: 0.1em solid rgb(194, 194, 194);
   width: 10em;
   margin-bottom: 1em;
   background-color: white;
 }
 
-.dropdown .title{
-  margin: .3em .3em .3em .3em;	
+.dropdown .title {
+  margin: 0.3em 0.3em 0.3em 0.3em;
   width: 100%;
 }
 
-.dropdown .title .fa-angle-right{
+.dropdown .title .fa-angle-right {
   float: right;
-  margin-right: .7em;
-  margin-top: .2em;
-  transition: transform .3s;
+  margin-right: 0.7em;
+  margin-top: 0.2em;
+  transition: transform 0.3s;
 }
 
-.dropdown .menu{
-  transition: max-height .5s ease-out;
+.dropdown .menu {
+  transition: max-height 0.5s ease-out;
   max-height: 20em;
   overflow: hidden;
 }
 
-.dropdown .menu .option{
-  margin: .3em .3em .3em .3em;
+.dropdown .menu .option {
+  margin: 0.3em 0.3em 0.3em 0.3em;
   margin-top: 0.3em;
 }
 
-.dropdown .menu .option:hover{
+.dropdown .menu .option:hover {
   background: rgba(83, 81, 81, 0.2);
 }
 
@@ -110,11 +108,11 @@ h2 {
   background-color: hotpink;
 } */
 
-.pointer-cursor:hover{
+.pointer-cursor:hover {
   cursor: pointer;
 }
 
-.rotate-90{
+.rotate-90 {
   transform: rotate(90deg);
 }
 
@@ -123,7 +121,7 @@ h2 {
   border: none;
   font-family: sans-serif;
   font-size: 1em;
-  padding: .6em 2em;
+  padding: 0.6em 2em;
   margin: 0 1em;
   cursor: pointer;
 }
@@ -131,7 +129,6 @@ h2 {
 .button:hover {
   background-color: rgb(221, 221, 221);
 }
-
 
 /* task element */
 .task-element {
@@ -146,7 +143,12 @@ h2 {
   border-bottom: 1px solid rgb(231, 231, 231);
 }
 
-.delete, .edit {
+.task-element:hover {
+  background-color: hsl(0, 0%, 99%);
+}
+
+.delete,
+.edit {
   display: flex;
   height: 50px;
   width: 50px;
@@ -154,18 +156,19 @@ h2 {
   background-repeat: no-repeat;
   background-position: center;
   cursor: pointer;
-  transition: opacity .7s ease-in-out;
+  transition: opacity 0.7s ease-in-out;
 }
 .delete {
-  background-image: url('/src/Components/SVG/trash-can.svg');
+  background-image: url("/src/Components/SVG/trash-can.svg");
   margin-right: 2em;
 }
 
 .edit {
-  background-image: url('/src/Components/SVG/edit-pencil.svg');
+  background-image: url("/src/Components/SVG/edit-pencil.svg");
 }
 
-.delete:hover, .edit:hover {
+.delete:hover,
+.edit:hover {
   background-color: rgb(243, 243, 243);
 }
 
@@ -196,12 +199,14 @@ h2 {
   max-height: 50px;
 }
 
-.team, .person, .avatar {
+.team,
+.person,
+.avatar {
   pointer-events: none;
   display: none;
   background-position: center;
   background-repeat: no-repeat;
-  background-image: url('/src/Components/SVG/team-icon.svg');
+  background-image: url("/src/Components/SVG/team-icon.svg");
 }
 
 /* IDs - unique elements*/
@@ -216,6 +221,7 @@ h2 {
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
+  z-index: 20;
 }
 
 #header-logo {
@@ -227,7 +233,7 @@ h2 {
   font-size: 28px;
   font-weight: 500;
 }
-  /* menu */
+/* menu */
 #menu {
   width: 300px;
   height: calc(100vh - 60px);
@@ -288,7 +294,9 @@ h2 {
 }
 
 /* other menu elements */
-#inbox-container, #today-container, #next-seven-container {
+#inbox-container,
+#today-container,
+#next-seven-container {
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
@@ -301,32 +309,38 @@ h2 {
   cursor: pointer;
 }
 
-#inbox-container > *, #today-container > *, #next-seven-container > * {
+#inbox-container > *,
+#today-container > *,
+#next-seven-container > * {
   pointer-events: none;
 }
 
-#inbox-container:hover, #today-container:hover, #next-seven-container:hover {
+#inbox-container:hover,
+#today-container:hover,
+#next-seven-container:hover {
   background-color: rgb(255, 255, 255);
 }
 
-#inbox-container:active, #today-container:active, #next-seven-container:active {
-  transition: background-color .05s ease-in-out;
+#inbox-container:active,
+#today-container:active,
+#next-seven-container:active {
+  transition: background-color 0.05s ease-in-out;
   background-color: rgb(184, 255, 228);
 }
 
 #inbox-icon {
   margin-right: 15px;
-  background-image: url('/src/Components/SVG/inbox-file.svg');
+  background-image: url("/src/Components/SVG/inbox-file.svg");
 }
 
 #today-icon {
   margin-right: 15px;
-  background-image: url('/src/Components/SVG/today-logo.svg');
+  background-image: url("/src/Components/SVG/today-logo.svg");
 }
 
 #next-seven-icon {
   margin-right: 15px;
-  background-image: url('/src/Components/SVG/next-seven.svg');
+  background-image: url("/src/Components/SVG/next-seven.svg");
 }
 
 /* CONTENT */
@@ -336,34 +350,41 @@ h2 {
   width: calc(100vw - 300px);
   background-color: rgb(255, 255, 255);
   margin-left: 300px;
-  margin-top: 60px;
-  padding: 50px;
+  padding: 60px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   flex-direction: column;
+  position: relative;
+  overflow: auto;
 }
 
-/* header */
+/* content header */
 #content-header-container {
   display: inline-flex;
   align-items: flex-start;
   justify-content: space-between;
   flex-direction: row;
-  min-width: 100%;
-  margin-bottom: 25px;
+  margin-left: 300px;
+  padding: 20px 60px 20px 50px;
+  background-color: white;
+  position: fixed;
+  left: 0;
+  right: 0;
   z-index: 10;
+  background-color: hsl(120, 7%, 98%);
+  box-shadow: 0px 1px 0px hsl(120, 7%, 95%);
 }
 
-#today-header-label-container {
+#content-header-label-container {
   display: flex;
   align-items: baseline;
   flex-direction: row;
 }
 
-#today-header-date {
-  margin-left: .5em;
-  margin-top: .5em;
+#content-header-date {
+  margin-left: 0.5em;
+  margin-top: 0.5em;
   font-weight: 300;
   color: #5c5c5c;
 }
@@ -374,46 +395,53 @@ h2 {
   justify-content: space-evenly;
 }
 #icon-person {
-  background-image: url('/src/Components/SVG/add-person.svg');
+  background-image: url("/src/Components/SVG/add-person.svg");
 }
 #icon-person:hover {
-  background-image: url('/src/Components/SVG/add-person-hover.svg');
+  background-image: url("/src/Components/SVG/add-person-hover.svg");
 }
 
 #icon-settings {
-  background-image: url('/src/Components/SVG/3-dots.svg');
+  background-image: url("/src/Components/SVG/3-dots.svg");
 }
 
 #icon-settings:hover {
-  background-image: url('/src/Components/SVG/3-dots-hover.svg');
+  background-image: url("/src/Components/SVG/3-dots-hover.svg");
 }
 
 #icon-chat {
-  background-image: url('/src/Components/SVG/chat-bubble.svg');
+  background-image: url("/src/Components/SVG/chat-bubble.svg");
 }
 
 #icon-chat:hover {
-  background-image: url('/src/Components/SVG/chat-bubble-hover.svg');
+  background-image: url("/src/Components/SVG/chat-bubble-hover.svg");
 }
 
 /* tasks */
 #task-wrapper {
   min-width: 100%;
-  margin: 0;
+  min-height: 100vh;
+  margin-top: 200px;
   padding: 0;
   display: flex;
   flex-direction: column;
+  background-color: white;
+  overflow: scroll;
 }
 
 /* add task form */
 #add-task-form-container {
-  min-width: 100%;
   height: 500px;
+  min-width: 1100px;
   display: none;
   border: none;
-  background-color: rgb(245, 245, 245);
-  position: relative;
-  margin-bottom: 2em;
+  background-color: rgba(223, 223, 223, 0.952);
+  position: fixed;
+  margin-bottom: -5em;
+  top: 15em;
+  right: 10em;
+  left: 25em;
+  z-index: 5;
 }
 
 #add-task-form-button-container {
@@ -452,13 +480,13 @@ h2 {
 }
 
 #add-task-input {
-  display: block;
+  display: flex;
   border: none;
   outline: none;
   height: 36px;
-  min-width: 700px;
+  width: 700px;
   padding-left: 1em;
-  padding-top: .5em;
+  padding-top: 0.5em;
   background-color: white;
   font-size: 1em;
 }
@@ -472,18 +500,18 @@ h2 {
   width: 250px;
   height: 36px;
   font-family: sans-serif;
-  font-size: .9em;
+  font-size: 0.9em;
   display: flex;
   justify-content: flex-end;
   background-color: rgba(255, 255, 255, 0);
   padding-left: 3em;
-  padding-top: .3em;
+  padding-top: 0.3em;
   margin-right: 2em;
   color: #808080;
   outline: none;
   border: none;
   cursor: pointer;
-  background-image: url('/src/Components/SVG/calendar-choose.svg');
+  background-image: url("/src/Components/SVG/calendar-choose.svg");
   background-repeat: no-repeat;
   background-position: right;
 }
@@ -500,12 +528,12 @@ h2 {
 }
 
 #add-task-description-container {
-  width: 100%;
+  max-width: 100%;
   min-height: 100px;
   border: 1px solid rgb(207, 207, 207);
   background-color: white;
   margin-bottom: 2.5em;
-  padding: .3em 1em;
+  padding: 0.3em 1em;
   line-height: 2em;
   display: flex;
   align-items: flex-start;
@@ -518,14 +546,14 @@ h2 {
   overflow-x: hidden;
   overflow-y: auto;
   min-height: 95px;
-  width: 100%;
+  min-width: 100%;
   font-size: 1em;
 }
 
 .textarea {
   font-size: 1em;
   font-family: sans-serif;
-  outline: none;  
+  outline: none;
   overflow: hidden;
   resize: none;
 }

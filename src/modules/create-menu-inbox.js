@@ -1,20 +1,19 @@
-import { createTaskContent } from './task';
+import { createTaskContent } from './create-task';
 import { myTasks } from './initial-load';
+import { updateMenu } from './update-UI';
 
-const createInboxMenu = () => {
+const createInboxMenu = (initialLoadPageLabel) => {
   const inboxContainer = createInboxContainer();
   const inboxIcon = createInboxIcon();
-  const inboxLabel = createInboxLabel();
-  const countContainer = createCountContainer();
+  const inboxLabel = createInboxLabel(initialLoadPageLabel);
   const inboxCount = createInboxCount();
 
-  countContainer.appendChild(inboxCount);
   inboxContainer.appendChild(inboxIcon);
   inboxContainer.appendChild(inboxLabel);
-  inboxContainer.appendChild(countContainer);
+  inboxContainer.appendChild(inboxCount);
 
   inboxContainer.addEventListener('click', createTaskContent);
-  // inboxContainer.addEventListener('click', updateMenu);
+  inboxContainer.addEventListener('click', updateMenu);
 
   return inboxContainer;
 };
@@ -33,17 +32,14 @@ const createInboxIcon = () => {
   return inboxIcon;
 };
 
-const createInboxLabel = () => {
+const createInboxLabel = (initialLoadPageLabel) => {
   const inboxLabel = document.createElement('p');
   inboxLabel.setAttribute('id', 'menu-inbox-label');
   inboxLabel.textContent = 'Inbox';
+  if (initialLoadPageLabel === 'Inbox') {
+    inboxLabel.style.fontWeight = '700';
+  }
   return inboxLabel;
-};
-
-const createCountContainer = () => {
-  const countContainer = document.createElement('div');
-  countContainer.setAttribute('class', 'count-container');
-  return countContainer;
 };
 
 const createInboxCount = () => {
