@@ -1,56 +1,49 @@
-import { updateContentLabel } from './update-UI.js';
-import { myTasks } from './initial-load';
 import {
   handleDeleteEditIconsOpacity1,
   handleDeleteEditIconsOpacity0,
   deleteTask,
 } from './update-UI.js';
-import format from 'date-fns/format';
-import { editTask } from './edit-task.js';
 import {
   createElement,
   createElementSVG,
   createElementNS,
 } from './create-element.js';
+import {
+  editTask
+} from './edit-task.js';
+import { format } from 'date-fns';
 
 //create element functions
-const createTaskContent = e => {
-  const contentWrapper = document.getElementById('content-wrapper');
-  const taskWrapper = document.getElementById('task-wrapper');
-  localStorage.setItem('myTasks', JSON.stringify(myTasks));
 
-  clearTaskWrapper();
+const createTaskDateDividerElement = date => {
+  const formattedDate = format(new Date(date), 'MM-dd-yyyy');
+  const container = createElement('div', {
+    class: 'task-date-divider-element',
+    id: `task-date-divider-element-${formattedDate}`,
+  });
 
-  if (e.target.id === 'inbox-container') {
-    const tasks = myTasks;
-    appendTasks(tasks);
-    updateContentLabel('Inbox');
-  } else if (e.target.id === 'today-container') {
-    const tasks = todayTaskFilter();
-    appendTasks(tasks);
-    updateContentLabel('Today');
-  } else if (e.target.id === 'next-seven-container') {
-    const tasks = next7Filter();
-    appendTasks(tasks);
-    updateContentLabel('Next 7 Days');
-  }
-  contentWrapper.appendChild(taskWrapper);
+  const dateLabel = createElement('p', {
+    class: 'task-date-divider-label',
+    id: `task-date-divider-label-${formattedDate}`,
+  });
+
+  const taskContainer = createElement('div', {
+    id: `task-divider-content-container-${formattedDate}`,
+    class: 'task-divider-content-container',
+  })
+
+  dateLabel.textContent = format(new Date(date), 'MMM do, yyyy').toString();
+  container.appendChild(dateLabel);
+  container.appendChild(taskContainer);
+
+
+  return container;
 };
 
 const createTask = (task, index) => {
-  let { date, priority, priorityColor, label, category, person, avatar } = task;
+  let { date, label, categoryColor, categoryLabel, priorityColor, priorityLabel, person, avatar } = task;
 
-  category = category.toLowerCase().trim();
-  let categoryColor = '';
-  if (category === 'personal') {
-    categoryColor = '#1e90ff'; //blue
-  } else if (category === 'work') {
-    categoryColor = '#ffdb58'; //yellow
-  } else if (category === 'learning') {
-    categoryColor = '#32cd32'; //green
-  } else if (category === 'hobby') {
-    categoryColor = '#ff9f00'; //orange
-  }
+  // categoryLabel = categoryLabel.toLowerCase().trim();
 
   const taskElement = createElement('div', {
     class: 'task-element',
@@ -159,9 +152,9 @@ const createTask = (task, index) => {
     'data-key': index,
   });
 
-  taskElement.dataset.key = index;
   taskLabel.textContent = label;
-  categoryContainer.textContent = category.toLowerCase().trim();
+  categoryContainer.textContent = categoryLabel;
+  // .toLowerCase().trim();
 
   taskElement.addEventListener('mouseover', handleDeleteEditIconsOpacity1);
   taskElement.addEventListener('mouseleave', handleDeleteEditIconsOpacity0);
@@ -183,4 +176,4 @@ const createTask = (task, index) => {
   return taskElement;
 };
 
-export { createTask, createTaskContent };
+export { createTask, createTaskDateDividerElement };

@@ -1,10 +1,67 @@
-import { createAddTaskMenu } from './create-menu-add-task';
-import { createInboxMenu } from './create-menu-inbox';
-import { createNext7Menu } from './create-menu-next-seven';
-import { createTodayMenu } from './create-menu-today';
-import { createElement } from './create-element';
+import { createElement, createElementMenu } from './create-element';
+import { createMenuDivideLine } from './create-menu-divider';
+import {
+  svgIconMenuAdd,
+  svgIconMenuInbox,
+  svgIconMenuToday,
+  svgIconMenuNext7,
+} from './svg-variables';
+import { handleAddTaskContainerDisplay, updateMenu } from './update-UI';
+import { createDropDownOptions } from './create-add-task-form.js';
+import { showTaskContent } from './update-UI.js';
+import { initialLoadPageLabel } from './variables';
 
-const createMenu = initialLoadPageLabel => {
+const createMenu = () => {
+  const addElement = createElementMenu(
+    'add-task',
+    svgIconMenuAdd,
+    false,
+    'Add Task',
+    {
+      click: [handleAddTaskContainerDisplay, createDropDownOptions],
+    }
+  );
+
+  const inboxElement = createElementMenu(
+    'inbox',
+    svgIconMenuInbox,
+    true,
+    'Inbox',
+    {
+      click: [showTaskContent, updateMenu],
+    }
+  );
+
+  const todayElement = createElementMenu(
+    'today',
+    svgIconMenuToday,
+    true,
+    'Today',
+    {
+      click: [showTaskContent, updateMenu],
+    }
+  );
+
+  const next7Element = createElementMenu(
+    'next-seven',
+    svgIconMenuNext7,
+    true,
+    'Next 7 Days',
+    {
+      click: [showTaskContent, updateMenu],
+    }
+  );
+
+  const addProjectElement = createElementMenu(
+    'add-project',
+    svgIconMenuAdd,
+    false,
+    'Add Project',
+    {
+      click: [],
+    }
+  );
+
   const menu = createElement('div', {
     id: 'menu',
   });
@@ -13,24 +70,24 @@ const createMenu = initialLoadPageLabel => {
     id: 'menu-items-container',
   });
 
-  menuItems.appendChild(createAddTaskMenu());
-
   if (initialLoadPageLabel === 'Inbox') {
-    menuItems.appendChild(createInboxMenu(initialLoadPageLabel));
-    menuItems.appendChild(createTodayMenu());
-    menuItems.appendChild(createNext7Menu());
+    inboxElement.style.fontWeight = '700';
   } else if (initialLoadPageLabel === 'Today') {
-    menuItems.appendChild(createInboxMenu());
-    menuItems.appendChild(createTodayMenu(initialLoadPageLabel));
-    menuItems.appendChild(createNext7Menu());
+    todayElement.style.fontWeight = '700';
   } else if (initialLoadPageLabel === 'Next 7 Days') {
-    menuItems.appendChild(createInboxMenu());
-    menuItems.appendChild(createTodayMenu());
-    menuItems.appendChild(createNext7Menu(initialLoadPageLabel));
+    next7Element.style.fontWeight = '700';
   }
+
+  menuItems.appendChild(addElement);
+  menuItems.appendChild(createMenuDivideLine());
+  menuItems.appendChild(inboxElement);
+  menuItems.appendChild(todayElement);
+  menuItems.appendChild(next7Element);
+  menuItems.appendChild(createMenuDivideLine()); //adding second divider here
+  menuItems.appendChild(addProjectElement);
   menu.appendChild(menuItems);
+
   return menu;
 };
-
 
 export { createMenu };

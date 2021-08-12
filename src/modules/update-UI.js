@@ -1,93 +1,125 @@
-import { next7TaskFilter, todayTaskFilter } from "./edit-task.js";
-import { setCurrentPageView } from './edit-task.js';
+import {
+  inboxTaskSort,
+  next7TaskFilter,
+  todayTaskFilter,
+  sortMyTasksByDate,
+  capitalizeFirstLetter
+} from './edit-task.js';
+import {
+  taskToEdit,
+  setTaskToEdit,
+  setCurrentPageView,
+  currentPageView,
+  myTasks,
+  setPriorityCircleColor,
+  setCategoryCircleColor, 
+  priorityCircleColor,
+  categoryCircleColor
+} from './variables.js';
+import { populateTaskWrapper } from './initial-load.js';
+import { Task } from './task-template.js';
+import datepicker from 'js-datepicker';
+import { format } from 'date-fns';
+import { createDropDownOptions } from './create-add-task-form.js';
 
-const updateContentLabel = (contentLabel) => {
+const updateContentHeaderLabel = contentLabel => {
   const label = document.getElementById('content-header-label');
   label.textContent = contentLabel;
-}
+};
+const showTaskContent = e => {
+  localStorage.setItem('myTasks', JSON.stringify(myTasks));
+  const contentWrapper = document.getElementById('content-wrapper');
+  const taskWrapper = document.getElementById('task-wrapper');
+  clearTaskWrapper();
+
+  if (e.target.id === 'menu-inbox-element-container') {
+    populateTaskWrapper(inboxTaskSort());
+    updateContentHeaderLabel('Inbox');
+  } else if (e.target.id === 'menu-today-element-container') {
+    populateTaskWrapper(todayTaskFilter());
+    updateContentHeaderLabel('Today');
+  } else if (e.target.id === 'menu-next-seven-element-container') {
+    populateTaskWrapper(next7TaskFilter());
+    updateContentHeaderLabel('Next 7 Days');
+  }
+};
 
 const updateTasks = () => {
   const taskWrapper = document.getElementById('task-wrapper');
   const date = document.getElementById('task-date').value;
   const label = document.getElementById('add-task-input').value;
-  const priorityColor = '#236abd'; //default color for now
   const description = document.getElementById(
-    'add-task-description-input'
+    'description-span'
   ).value;
-  const category = document.getElementById('dropdown-title').textContent;
-
-  if (taskToEdit) {
+  const categoryLabel = document.getElementById(
+    'dropdown-title-category'
+  ).textContent;
+  const priorityLabel = document.getElementById(
+    'dropdown-title-priority'
+    ).textContent;
+    console.log({categoryLabel, priorityLabel})
+  
+  if (!date) {
+    return;
+  }
+  if (taskToEdit) { //this section edits task
+    console.log(taskToEdit)
     taskToEdit.date = date;
     taskToEdit.label = label;
-    taskToEdit.priorityColor = priorityColor;
     taskToEdit.description = description;
-    taskToEdit.category = category.toLowerCase().trim();
+    taskToEdit.priorityLabel = priorityLabel.toLowerCase().trim();
+    taskToEdit.categoryLabel = categoryLabel.toLowerCase().trim();
+    taskToEdit.priorityColor = priorityCircleColor;
+    taskToEdit.categoryColor = categoryCircleColor;
     taskToEdit.currentMyTasksIndex = myTasks.indexOf(taskToEdit);
-    taskToEdit.edit = false;
-    setTaskToEdit('');
-  } else {
+  } else { //this creates a new task if there is no { taskToEdit }
     const taskObject = new Task(
       date,
-      priorityColor,
       label,
       description,
-      category
-    );
-
-    myTasks.push(taskObject);
-    localStorage.setItem('myTasks', JSON.stringify(myTasks));
-  }
-
-  updateTaskContent();
-  addTaskFormCancelHandler();
+      categoryCircleColor,
+      priorityCircleColor,
+      categoryLabel,
+      priorityLabel,
+      );
+      
+      myTasks.push(taskObject);
+      sortMyTasksByDate();
+    }
+    updateTaskContent();
+    clearAddTaskForm();
 };
 
 const updateTaskContent = () => {
-  const contentWrapper = document.getElementById('content-wrapper');
-  const taskWrapper = document.getElementById('task-wrapper');
   localStorage.setItem('myTasks', JSON.stringify(myTasks));
 
-  while (taskWrapper.firstElementChild) {
-    taskWrapper.firstElementChild.remove();
-  }
+  clearTaskWrapper();
 
   if (currentPageView === 'Inbox') {
-    const tasks = myTasks;
-    tasks.forEach((task, index) => {
-      taskWrapper.appendChild(createTask(task, index));
-    });
-    contentWrapper.appendChild(createContentHeader('Inbox'));
+    populateTaskWrapper(inboxTaskSort());
   } else if (currentPageView === 'Today') {
-    const tasks = todayTaskFilter();
-    tasks.forEach((task, index) => {
-      taskWrapper.appendChild(createTask(task, index));
-    });
-    contentWrapper.appendChild(createContentHeader('Today'));
+    populateTaskWrapper(todayTaskFilter());
   } else if (currentPageView === 'Next 7 Days') {
-    const tasks = next7TaskFilter();
-    tasks.forEach((task, index) => {
-      taskWrapper.appendChild(createTask(task, index));
-    });
-    contentWrapper.appendChild(createContentHeader('Next 7 Days'));
+    populateTaskWrapper(next7TaskFilter());
   }
+  updateContentHeaderLabel(currentPageView);
 };
 
 const updateMenu = e => {
   const inboxLabel = document.getElementById('menu-inbox-label');
   const todayLabel = document.getElementById('menu-today-label');
-  const next7Label = document.getElementById('menu-seven-label');
-
-  if (e.target.id === 'today-container') {
+  const next7Label = document.getElementById('menu-next-seven-label');
+  if (e.target.id === 'menu-today-element-container') {
     inboxLabel.style.fontWeight = '300';
     todayLabel.style.fontWeight = '700';
     next7Label.style.fontWeight = '300';
     setCurrentPageView('Today');
-  } else if (e.target.id === 'inbox-container') {
+  } else if (e.target.id === 'menu-inbox-element-container') {
     inboxLabel.style.fontWeight = '700';
     todayLabel.style.fontWeight = '300';
     next7Label.style.fontWeight = '300';
     setCurrentPageView('Inbox');
-  } else if (e.target.id === 'next-seven-container') {
+  } else if (e.target.id === 'menu-next-seven-element-container') {
     inboxLabel.style.fontWeight = '300';
     todayLabel.style.fontWeight = '300';
     next7Label.style.fontWeight = '700';
@@ -102,57 +134,53 @@ const updateMenuCount = () => {
 
   document.getElementById('menu-inbox-count').textContent = inboxCount;
   document.getElementById('menu-today-count').textContent = todayCount;
-  document.getElementById('menu-next7-count').textContent = next7Count;
+  document.getElementById('menu-next-seven-count').textContent = next7Count;
 };
 
 const clearTaskWrapper = () => {
   const taskWrapper = document.getElementById('task-wrapper');
-  if(taskWrapper) {
+  if (taskWrapper) {
     while (taskWrapper.firstElementChild) {
       taskWrapper.firstElementChild.remove();
     }
-  };
+  }
 };
 
-const deleteTask = (e) => {
+const deleteTask = e => {
   const elementIndex = findElementDataKey(e);
   const element = document.getElementById(`task-element-${elementIndex}`);
   element.remove();
   myTasks.splice(elementIndex, 1);
   localStorage.setItem('myTasks', JSON.stringify(myTasks));
-}
+};
 
-const appendTasks = (tasks) => {
-  const taskWrapper = document.getElementById('task-wrapper');
-      tasks.forEach((task, index) => {
-      taskWrapper.appendChild(createTask(task, index));
-    });
-}
-
-const populateAddTaskForm = (taskToEdit) => {
+const populateAddTaskForm = () => {
   let {
     date,
-    priorityColor,
     label,
-    category,
-    currentMyTasksIndex,
     description,
+    categoryColor,
+    priorityColor,
+    categoryLabel,
+    priorityLabel,
     person,
     avatar,
   } = taskToEdit;
-  console.log(taskToEdit);
 
   const addTaskForm = document.getElementById('add-task-form-container');
-  const formDate = document.getElementById('task-date');
   const formLabel = document.getElementById('add-task-input');
-  const formDescription = document.getElementById('add-task-description-input');
-  const formCategory = document.getElementById('dropdown-title');
+  const formDate = document.getElementById('task-date');
+  const formDescription = document.getElementById('description-span');
+  const formCategory = document.getElementById('dropdown-title-category');
+  const formPriority = document.getElementById('dropdown-title-priority');
 
   addTaskForm.style.display = 'flex';
-  formDate.value = date;
   formLabel.value = label;
-  formDescription.value = description;
-  formCategory.textContent = capitalizeFirstLetter(category);
+  formDate.value = format(new Date(date), 'MMM do, yyyy');
+  formDescription.textContent = description;
+  formCategory.textContent = capitalizeFirstLetter(categoryLabel);
+  formPriority.textContent = capitalizeFirstLetter(priorityLabel);
+  createDropDownOptions();
 };
 
 const handleDeleteEditIconsOpacity1 = e => {
@@ -178,15 +206,117 @@ const findElementDataKey = e => {
   return key;
 };
 
+const toggleClass = (elem, className) => {
+  const classList = elem.getAttribute('class');
+  if (classList.includes(className)) {
+    const newClasses = classList.replace(className, '').trim();
+    elem.setAttribute('class', newClasses);
+  } else {
+    const newClassList = `${classList} ${className}`;
+    elem.setAttribute('class', newClassList);
+  }
+  return elem;
+};
+
+const toggleDisplay = elem => {
+  const curDisplayStyle = elem.style.display;
+
+  if (curDisplayStyle === 'none' || curDisplayStyle === '') {
+    elem.style.display = 'block';
+  } else {
+    elem.style.display = '';
+  }
+};
+
+const handleAddIconContainer = e => {
+  // e.stopPropagation;
+  const addIcon = document.getElementById('add-task-icon');
+  toggleClass(addIcon, 'rotate-90');
+};
+
+const toggleMenuDisplay = e => {
+  let menu;
+  let icon;
+  if (e.target.id === 'add-task-dropdown-title-container-category') {
+    menu = document.getElementById('option-menu-category');
+    icon = document.getElementById('dropdown-icon-category');
+  } else if (e.target.id === 'add-task-dropdown-title-container-priority') {
+    menu = document.getElementById('option-menu-priority');
+    icon = document.getElementById('dropdown-icon-priority');
+  }
+
+  toggleDisplay(menu);
+  toggleClass(menu, 'hide');
+  toggleClass(icon, 'rotate-90');
+};
+
+const handleOptionSelected = e => {
+  const id = e.target.parentNode.id;
+  const target = id.replace(/option-menu-/g, '');
+  const newValue = e.target.textContent;
+  const titleElem = document.getElementById(`dropdown-title-${target}`);
+  const icon = document.getElementById(`dropdown-icon-${target}`);
+
+  if (target === 'priority') {
+    setPriorityCircleColor(e.target.dataset.color);
+  } else if (target === 'category') {
+    setCategoryCircleColor(e.target.dataset.color);
+  }
+
+  toggleClass(e.target.parentNode, 'hide');
+  toggleClass(icon, 'rotate-90');
+
+  titleElem.textContent = newValue;
+  titleElem.appendChild(icon);
+};
+
+const handleAddTaskContainerDisplay = () => {
+  const container = document.getElementById('add-task-form-container');
+  container.style.display = 'flex';
+};
+
+const clearAddTaskForm = () => {
+  document.getElementById('add-task-form-container').style.display = 'none';
+  document.getElementById('add-task-input').value = '';
+  document.getElementById('task-date').value = '';
+  document.getElementById('description-span').value = '';
+  document.getElementById('dropdown-title-category').textContent = 'Category';
+  document.getElementById('dropdown-title-priority').textContent = 'Priority';
+  setTaskToEdit('');
+  setPriorityCircleColor('');
+  setCategoryCircleColor('');
+};
+
+const dateSelect = e => {
+  const picker = datepicker('#task-date', {
+    formatter: (input, date) => {
+      const value = format(new Date(date), 'MMM do, yyyy');
+      input.value = value;
+    },
+  });
+  e.stopPropagation();
+  const isHidden = picker.calendarContainer.classList.contains('qs-hidden');
+  picker[isHidden ? 'show' : 'hide']();
+};
+
 export {
-  updateContentLabel,
+  updateContentHeaderLabel,
+  updateTaskContent,
   updateTasks,
   updateMenu,
   updateMenuCount,
   clearTaskWrapper,
   deleteTask,
-  appendTasks,
   populateAddTaskForm,
   handleDeleteEditIconsOpacity1,
   handleDeleteEditIconsOpacity0,
+  clearAddTaskForm,
+  handleAddTaskContainerDisplay,
+  dateSelect,
+  handleOptionSelected,
+  toggleDisplay,
+  toggleMenuDisplay,
+  toggleClass,
+  handleAddIconContainer,
+  showTaskContent
 };

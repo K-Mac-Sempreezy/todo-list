@@ -1,88 +1,82 @@
 import { myTasks } from './initial-load.js';
-import format from 'date-fns/format';
-import { createTask } from './create-task.js';
-import { createContentHeader } from './create-content-header.js';
-import { createAddTaskForm } from './create-add-task-form.js';
+import { format, formatISO, addDays, isWithinInterval } from 'date-fns';
+import { populateAddTaskForm } from './update-UI.js';
+import { currentPageView, setTaskToEdit } from './variables.js';
 
-let taskToEdit;
-const setTaskToEdit = (string) => {
-  taskToEdit = string;
-};
-
-let currentPageView; //Initial Load Page
-const setCurrentPageView = (string) => {
-  currentPageView = string;
-};
-
-const editTask = (e) => {
+const editTask = e => {
   const id = e.target.id;
+  console.log(id)
   const index = id.replace(/task-edit-/g, '');
   let tasks;
-  let currentListIndex;
 
   if (currentPageView === 'Inbox') {
-    tasks = myTasks.sort((a, b) => new Date(a.date) - new Date(b.date));
+    tasks = inboxTaskSort();
   } else if (currentPageView === 'Today') {
-    tasks = myTasks
-      .filter((task) => {
-        return (
-          format(new Date(task.date), 'yyyy-MM-dd') ==
-          format(new Date(), 'yyyy-MM-dd')
-        );
-      })
-      .sort((a, b) => (a, b) => new Date(a.date) - new Date(b.date));
+    tasks = todayTaskFilter();
   } else if (currentPageView === 'Next 7 Days') {
-    tasks = myTasks
-      .filter((task) => {
-        const fromUnix = new Date().getTime() / 1000;
-        const untilUnix = new Date().setDate(new Date().getDate() + 7) / 1000;
-        return (
-          new Date(task.date).getTime() / 1000 >= fromUnix &&
-          new Date(task.date).getTime() / 1000 <= untilUnix
-        );
-      })
-      .sort((a, b) => (a, b) => new Date(a.date) - new Date(b.date));
+    tasks = next7TaskFilter();
   }
-  currentListIndex = tasks[index];
-  taskToEdit = myTasks[myTasks.indexOf(currentListIndex)];
-  taskToEdit.edit = true;
-  taskToEdit.currentMyTasksIndex = myTasks.indexOf(taskToEdit);
-  populateAddTaskForm(taskToEdit);
+  const currentListIndex = tasks[index];
+  const taskMyTasksIndexTest = myTasks.indexOf(currentListIndex)
+  // const taskMyTasksIndexTest = myTasks[myTasks.indexOf(currentListIndex)]
+  setTaskToEdit(taskMyTasksIndexTest);
+  populateAddTaskForm();
 };
 
-const capitalizeFirstLetter = (string) => {
+const capitalizeFirstLetter = string => {
   return string[0].toUpperCase() + string.slice(1);
-}
+};
+
+const sortMyTasksByDate = () => {
+  myTasks
+    .sort((a, b) => new Date(a.date) - new Date(b.date))
+    .forEach(task => (task.date = formatISO(new Date(task.date))));
+  localStorage.setItem('myTasks', JSON.stringify(myTasks));
+};
+
+const inboxTaskSort = () => {
+  const sortedTasks = myTasks.sort(
+    (a, b) =>
+      format(new Date(b.date), 'yyyy-MM-dd') -
+      format(new Date(a.date), 'yyyy-MM-dd')
+  );
+  return sortedTasks;
+};
 
 const todayTaskFilter = () => {
-  const today = myTasks.filter(
-    (task) =>
-      format(new Date(task.date), 'MMM do yyyy') ===
-      format(new Date(), 'MMM do yyyy')
-  );
+  const todayDay = new Date();
+  const today = myTasks.filter(task => {
+    return (
+      formatISO(new Date(), { representation: 'date' }) ===
+      formatISO(new Date(task.date), { representation: 'date' })
+    );
+  });
   return today;
 };
 
 const next7TaskFilter = () => {
   const next7Days = myTasks
-    .filter((task) => {
-      const fromUnix = new Date().getTime() / 1000;
-      const untilUnix = new Date().setDate(new Date().getDate() + 7) / 1000;
-      return (
-        new Date(task.date).getTime() / 1000 >= fromUnix &&
-        new Date(task.date).getTime() / 1000 <= untilUnix
-      );
+    .filter(task => {
+      const formattedDate = format(new Date(task.date), 'yyyy-MM-d');
+      const yesterday = format(addDays(new Date(), -1), 'yyyy-MM-d');
+      const until7Days = format(addDays(new Date(), 7), 'yyyy-MM-d');
+      const dateInRange = isWithinInterval(new Date(formattedDate), {
+        start: new Date(yesterday),
+        end: new Date(until7Days),
+      });
+      if (dateInRange === true) {
+        return task;
+      }
     })
-    .sort((a, b) => (a, b) => new Date(a.date) - new Date(b.date));
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
   return next7Days;
 };
 
 export {
-  currentPageView,
-  taskToEdit,
   editTask,
-  setTaskToEdit,
-  setCurrentPageView,
+  inboxTaskSort,
   todayTaskFilter,
   next7TaskFilter,
+  capitalizeFirstLetter,
+  sortMyTasksByDate
 };

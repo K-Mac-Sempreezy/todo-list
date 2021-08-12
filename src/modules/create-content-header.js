@@ -1,9 +1,8 @@
 import format from 'date-fns/format';
 import { createElement } from './create-element.js';
+import { initialLoadPageLabel } from './variables.js';
 
-const createContentHeader = initialLoadPageLabel => {
-  const now = format(new Date(), 'MMM do, yyyy');
-
+const createContentHeader = () => {
   const headerContainer = createElement('div', {
     id: 'content-header-container',
   });
@@ -40,7 +39,7 @@ const createContentHeader = initialLoadPageLabel => {
   });
 
   contentLabel.textContent = initialLoadPageLabel;
-  date.textContent = now;
+  date.textContent = format(new Date(), 'MMM do, yyyy');
 
   labelContainer.appendChild(contentLabel);
   iconsContainer.appendChild(personIcon);

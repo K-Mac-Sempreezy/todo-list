@@ -1,21 +1,23 @@
 class Task {
   constructor(
     date,
-    priorityColor,
     label,
     description,
-    category,
-    currentMyTasksIndex = null,
+    categoryColor,
+    priorityColor,
+    categoryLabel,
+    priorityLabel,
     project = null,
     person = false,
     avatar = false
   ) {
     this.date = date;
-    this.priorityColor = priorityColor;
     this.label = label;
     this.description = description;
-    this.category = category;
-    this.currentMyTasksIndex = currentMyTasksIndex;
+    this.categoryColor = categoryColor;
+    this.priorityColor = priorityColor;
+    this.categoryLabel = categoryLabel;
+    this.priorityLabel = priorityLabel;
     this.project = project;
     this.person = person;
     this.avatar = avatar;

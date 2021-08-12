@@ -1,82 +1,90 @@
 import '/src/style.css';
 import { createMenu } from './create-menu.js';
-import { createTask } from './create-task.js';
-import { Task } from './class-task.js';
-import { createHeader } from './create-header.js'
+import { createTask, createTaskDateDividerElement } from './create-task.js';
+import { Task } from './task-template.js';
+import { createHeader } from './create-header.js';
 import { createElement } from './create-element.js';
 import { createContentHeader } from './create-content-header.js';
 import { createAddTaskForm } from './create-add-task-form.js';
-import { setCurrentPageView } from './edit-task.js';
+import { clearTaskWrapper } from './update-UI.js';
+import { format } from 'date-fns';
+import { inboxTaskSort, sortMyTasksByDate } from './edit-task.js';
+import {
+  initialLoadPageLabel,
+  setCurrentPageView,
+  defaultTasks,
+  myTasks
+} from './variables.js';
 
-let myTasks = JSON.parse(localStorage.getItem('myTasks') || '[]');
-let isFirstTime = JSON.parse(localStorage.getItem('isFirstTime') || '');
-let initialLoadPageLabel = 'Inbox'; //or 'Next 7 Days', or 'Today'
 
 const createDefaultVariables = () => {
-  const date = new Date();
-  const defaultTasks = [
-    new Task(
-      date,
-      'rgb(121, 121, 121)',
-      '12:30 Lunch with Sarah',
-      'Meet at favorite restaurant',
-      'personal',
-      'rgb(255, 255, 0)'
-    ),
-
-    new Task(
-      date,
-      'rgb(25, 150, 15)',
-      '2:30 Call Luis',
-      'Check in about new project',
-      'work',
-      '#236abd'
-    ),
-  ];
-
-  if (myTasks.length <= 0 && isFirstTime === '') {
-    defaultTasks.forEach((task) => myTasks.push(task));
-    isFirstTime = false;
+  if (myTasks.length <= 0) {
+    defaultTasks.forEach(task => myTasks.push(task));
   }
-
   localStorage.setItem('myTasks', JSON.stringify(myTasks));
-  localStorage.setItem('isFirstTime', JSON.stringify(isFirstTime));
 };
 
 const createContent = () => {
-
- const contentWrapper = createElement('div', {
+  const contentWrapper = createElement('div', {
     id: 'content-wrapper',
-  });  
-  
+  });
+
   const taskWrapper = createElement('div', {
     id: 'task-wrapper',
   });
 
-  const contentHeader = createContentHeader(initialLoadPageLabel);
+  const contentHeader = createContentHeader();
   const addTaskForm = createAddTaskForm();
 
   createDefaultVariables();
   setCurrentPageView(initialLoadPageLabel);
-  
-  myTasks.forEach((task, index) => {
-    taskWrapper.appendChild(createTask(task, index));
-  });
+  sortMyTasksByDate();
 
   contentWrapper.appendChild(contentHeader);
   contentWrapper.appendChild(addTaskForm);
   contentWrapper.appendChild(taskWrapper);
+
   return contentWrapper;
 };
 
 const pageLoad = () => {
   const header = createHeader();
-  const menu = createMenu(initialLoadPageLabel);
+  const menu = createMenu();
   const content = createContent();
-  
+
   document.body.appendChild(header);
   document.body.appendChild(menu);
   document.body.appendChild(content);
+  populateTaskWrapper(inboxTaskSort());
 };
 
-export { createElement, pageLoad, myTasks, Task };
+const populateTaskWrapper = sortedTaskFunction => {
+  localStorage.setItem('myTasks', JSON.stringify(myTasks));
+  const taskWrapper = document.getElementById('task-wrapper');
+  let dates = [];
+  clearTaskWrapper();
+
+  sortedTaskFunction.forEach(task => {
+    if (
+      !document.getElementById(
+        `task-date-divider-element-${format(new Date(task.date), 'MM-dd-yyyy')}`
+      )
+    ) {
+      taskWrapper.appendChild(
+        createTaskDateDividerElement(format(new Date(task.date), 'MM-dd-yyyy'))
+      );
+    }
+  });
+
+  sortedTaskFunction.forEach((task, index) => {
+    const dividerTaskDate = document.getElementById(
+      `task-divider-content-container-${format(
+        new Date(task.date),
+        'MM-dd-yyyy'
+      )}`
+    );
+    dividerTaskDate.append(createTask(task, index));
+  });
+};
+
+export { createElement, pageLoad, populateTaskWrapper, myTasks, Task };
