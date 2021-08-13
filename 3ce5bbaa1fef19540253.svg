@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="15px" height="13px" viewBox="0 0 15 13" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>team-icon</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="team-icon" transform="translate(1.166717, 1.000000)" fill="#2E3CE2" stroke="#2E3CE2">
+            <g id="body" transform="translate(0.000000, 0.000000)">
+                <ellipse id="Oval" cx="6.33328305" cy="2.5" rx="2.14285714" ry="2.5"></ellipse>
+                <path d="M12.6666759,10.1087258 C12.6666759,8.58529313 9.83105477,7.3503069 6.33328052,7.3503069 C2.83550627,7.3503069 0,8.58529313 0,10.1087258 C0,10.5553102 0.00522212095,10.8458542 0.3138647,10.8458542 C0.622507278,10.8458542 11.8828923,10.8458542 12.2674064,10.8458542 C12.6519206,10.8458542 12.6666759,10.5603784 12.6666759,10.1087258 Z" id="Oval"></path>
+            </g>
+        </g>
+    </g>
+</svg>
