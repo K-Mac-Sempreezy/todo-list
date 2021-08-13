@@ -6,26 +6,22 @@ import {
   capitalizeFirstLetter
 } from './edit-task.js';
 import {
-  taskToEdit,
-  setTaskToEdit,
+  priorityCircleColor,
+  categoryCircleColor,
   setCurrentPageView,
   currentPageView,
   myTasks,
-  setPriorityCircleColor,
-  setCategoryCircleColor, 
-  priorityCircleColor,
-  categoryCircleColor
+  myTasksIndex,
+  setMyTasksIndex,
 } from './variables.js';
 import { populateTaskWrapper } from './initial-load.js';
 import { Task } from './task-template.js';
-import datepicker from 'js-datepicker';
-import { format } from 'date-fns';
-import { createDropDownOptions } from './create-add-task-form.js';
+import { formatISO } from 'date-fns';
+// import { dateP } from 'date.js';
 
-const updateContentHeaderLabel = contentLabel => {
-  const label = document.getElementById('content-header-label');
-  label.textContent = contentLabel;
-};
+
+
+// Display
 const showTaskContent = e => {
   localStorage.setItem('myTasks', JSON.stringify(myTasks));
   const contentWrapper = document.getElementById('content-wrapper');
@@ -44,34 +40,132 @@ const showTaskContent = e => {
   }
 };
 
+const toggleDisplay = elem => {
+  const curDisplayStyle = elem.style.display;
+
+  if (curDisplayStyle === 'none' || curDisplayStyle === '') {
+    elem.style.display = 'block';
+  } else {
+    elem.style.display = '';
+  }
+};
+
+const handleAddTaskContainerDisplay = (e) => {
+  const container = document.getElementById('add-task-form-container');
+  const label = document.getElementById('add-task-form-type-label');
+  container.style.display = 'flex';
+  let id = e.target.id;
+  if (id === 'menu-add-task-element-container') {
+    label.textContent = 'Add Task';
+  } else {
+    label.textContent = 'Edit Task';
+  }
+};
+
+const handleDeleteEditIconsOpacity1 = e => {
+  document.getElementById(
+    `task-delete-${findElementDataKey(e)}`
+  ).style.opacity = 1;
+  document.getElementById(
+    `task-edit-${findElementDataKey(e)}`
+  ).style.opacity = 1;
+};
+
+const handleDeleteEditIconsOpacity0 = e => {
+  document.getElementById(
+    `task-delete-${findElementDataKey(e)}`
+  ).style.opacity = 0;
+  document.getElementById(
+    `task-edit-${findElementDataKey(e)}`
+  ).style.opacity = 0;
+};
+
+const handleAddIconContainer = e => {
+  const addIcon = document.getElementById('add-task-icon');
+  toggleClass(addIcon, 'rotate-90');
+};
+
+const toggleMenuDisplay = e => {
+  let menu;
+  let icon;
+  if (e.target.id === 'add-task-dropdown-title-container-category') {
+    menu = document.getElementById('option-menu-category');
+    icon = document.getElementById('dropdown-icon-category');
+  } else if (e.target.id === 'add-task-dropdown-title-container-priority') {
+    menu = document.getElementById('option-menu-priority');
+    icon = document.getElementById('dropdown-icon-priority');
+  }
+
+  toggleDisplay(menu);
+  toggleClass(menu, 'hide');
+  toggleClass(icon, 'rotate-90');
+};
+
+const populateAddTaskForm = (number) => {
+  const taskToEdit = myTasks[number];
+  let {
+    date,
+    label,
+    description,
+    categoryColor,
+    priorityColor,
+    categoryLabel,
+    priorityLabel,
+    person,
+    avatar,
+  } = taskToEdit;
+
+  const addTaskForm = document.getElementById('add-task-form-container');
+  const formLabel = document.getElementById('add-task-input');
+  // const dateElement = dateP;
+  const formDescription = document.getElementById('description-span');
+  const formCategory = document.getElementById('dropdown-title-category');
+  const formPriority = document.getElementById('dropdown-title-priority');
+
+  formLabel.value = label;
+  formDescription.textContent = description;
+  formCategory.textContent = capitalizeFirstLetter(categoryLabel);
+  formPriority.textContent = capitalizeFirstLetter(priorityLabel);
+};
+
+
+
+// Update
+const updateContentHeaderLabel = contentLabel => {
+  const label = document.getElementById('content-header-label');
+  label.textContent = contentLabel;
+};
+
 const updateTasks = () => {
+  const taskToEdit = myTasks[myTasksIndex];
   const taskWrapper = document.getElementById('task-wrapper');
   const date = document.getElementById('task-date').value;
   const label = document.getElementById('add-task-input').value;
   const description = document.getElementById(
     'description-span'
-  ).value;
+  ).textContent;
   const categoryLabel = document.getElementById(
     'dropdown-title-category'
   ).textContent;
   const priorityLabel = document.getElementById(
     'dropdown-title-priority'
     ).textContent;
-    console.log({categoryLabel, priorityLabel})
+    // console.log({description, categoryLabel, priorityLabel})
   
   if (!date) {
     return;
   }
   if (taskToEdit) { //this section edits task
     console.log(taskToEdit)
-    taskToEdit.date = date;
+    taskToEdit.date = formatISO(new Date(date));
     taskToEdit.label = label;
     taskToEdit.description = description;
     taskToEdit.priorityLabel = priorityLabel.toLowerCase().trim();
     taskToEdit.categoryLabel = categoryLabel.toLowerCase().trim();
     taskToEdit.priorityColor = priorityCircleColor;
     taskToEdit.categoryColor = categoryCircleColor;
-    taskToEdit.currentMyTasksIndex = myTasks.indexOf(taskToEdit);
+    setMyTasksIndex(null);
+    localStorage.setItem('myTasks', JSON.stringify(myTasks));
   } else { //this creates a new task if there is no { taskToEdit }
     const taskObject = new Task(
       date,
@@ -137,6 +231,9 @@ const updateMenuCount = () => {
   document.getElementById('menu-next-seven-count').textContent = next7Count;
 };
 
+
+
+// Remove
 const clearTaskWrapper = () => {
   const taskWrapper = document.getElementById('task-wrapper');
   if (taskWrapper) {
@@ -144,6 +241,16 @@ const clearTaskWrapper = () => {
       taskWrapper.firstElementChild.remove();
     }
   }
+};
+
+const clearAddTaskForm = () => {
+  document.getElementById('add-task-form-container').style.display = 'none';
+  document.getElementById('add-task-input').value = '';
+  document.getElementById('task-date').value = '';
+  document.getElementById('description-span').value = '';
+  document.getElementById('dropdown-title-category').textContent = 'Category';
+  document.getElementById('dropdown-title-priority').textContent = 'Priority';
+  setMyTasksIndex(null);
 };
 
 const deleteTask = e => {
@@ -154,53 +261,9 @@ const deleteTask = e => {
   localStorage.setItem('myTasks', JSON.stringify(myTasks));
 };
 
-const populateAddTaskForm = () => {
-  let {
-    date,
-    label,
-    description,
-    categoryColor,
-    priorityColor,
-    categoryLabel,
-    priorityLabel,
-    person,
-    avatar,
-  } = taskToEdit;
 
-  const addTaskForm = document.getElementById('add-task-form-container');
-  const formLabel = document.getElementById('add-task-input');
-  const formDate = document.getElementById('task-date');
-  const formDescription = document.getElementById('description-span');
-  const formCategory = document.getElementById('dropdown-title-category');
-  const formPriority = document.getElementById('dropdown-title-priority');
 
-  addTaskForm.style.display = 'flex';
-  formLabel.value = label;
-  formDate.value = format(new Date(date), 'MMM do, yyyy');
-  formDescription.textContent = description;
-  formCategory.textContent = capitalizeFirstLetter(categoryLabel);
-  formPriority.textContent = capitalizeFirstLetter(priorityLabel);
-  createDropDownOptions();
-};
-
-const handleDeleteEditIconsOpacity1 = e => {
-  document.getElementById(
-    `task-delete-${findElementDataKey(e)}`
-  ).style.opacity = 1;
-  document.getElementById(
-    `task-edit-${findElementDataKey(e)}`
-  ).style.opacity = 1;
-};
-
-const handleDeleteEditIconsOpacity0 = e => {
-  document.getElementById(
-    `task-delete-${findElementDataKey(e)}`
-  ).style.opacity = 0;
-  document.getElementById(
-    `task-edit-${findElementDataKey(e)}`
-  ).style.opacity = 0;
-};
-
+//Utility
 const findElementDataKey = e => {
   let key = e.target.dataset.key;
   return key;
@@ -218,38 +281,6 @@ const toggleClass = (elem, className) => {
   return elem;
 };
 
-const toggleDisplay = elem => {
-  const curDisplayStyle = elem.style.display;
-
-  if (curDisplayStyle === 'none' || curDisplayStyle === '') {
-    elem.style.display = 'block';
-  } else {
-    elem.style.display = '';
-  }
-};
-
-const handleAddIconContainer = e => {
-  // e.stopPropagation;
-  const addIcon = document.getElementById('add-task-icon');
-  toggleClass(addIcon, 'rotate-90');
-};
-
-const toggleMenuDisplay = e => {
-  let menu;
-  let icon;
-  if (e.target.id === 'add-task-dropdown-title-container-category') {
-    menu = document.getElementById('option-menu-category');
-    icon = document.getElementById('dropdown-icon-category');
-  } else if (e.target.id === 'add-task-dropdown-title-container-priority') {
-    menu = document.getElementById('option-menu-priority');
-    icon = document.getElementById('dropdown-icon-priority');
-  }
-
-  toggleDisplay(menu);
-  toggleClass(menu, 'hide');
-  toggleClass(icon, 'rotate-90');
-};
-
 const handleOptionSelected = e => {
   const id = e.target.parentNode.id;
   const target = id.replace(/option-menu-/g, '');
@@ -257,11 +288,11 @@ const handleOptionSelected = e => {
   const titleElem = document.getElementById(`dropdown-title-${target}`);
   const icon = document.getElementById(`dropdown-icon-${target}`);
 
-  if (target === 'priority') {
-    setPriorityCircleColor(e.target.dataset.color);
-  } else if (target === 'category') {
-    setCategoryCircleColor(e.target.dataset.color);
-  }
+  // if (target === 'priority') {
+  //   setPriorityCircleColor(e.target.dataset.color);
+  // } else if (target === 'category') {
+  //   setCategoryCircleColor(e.target.dataset.color);
+  // }
 
   toggleClass(e.target.parentNode, 'hide');
   toggleClass(icon, 'rotate-90');
@@ -270,34 +301,6 @@ const handleOptionSelected = e => {
   titleElem.appendChild(icon);
 };
 
-const handleAddTaskContainerDisplay = () => {
-  const container = document.getElementById('add-task-form-container');
-  container.style.display = 'flex';
-};
-
-const clearAddTaskForm = () => {
-  document.getElementById('add-task-form-container').style.display = 'none';
-  document.getElementById('add-task-input').value = '';
-  document.getElementById('task-date').value = '';
-  document.getElementById('description-span').value = '';
-  document.getElementById('dropdown-title-category').textContent = 'Category';
-  document.getElementById('dropdown-title-priority').textContent = 'Priority';
-  setTaskToEdit('');
-  setPriorityCircleColor('');
-  setCategoryCircleColor('');
-};
-
-const dateSelect = e => {
-  const picker = datepicker('#task-date', {
-    formatter: (input, date) => {
-      const value = format(new Date(date), 'MMM do, yyyy');
-      input.value = value;
-    },
-  });
-  e.stopPropagation();
-  const isHidden = picker.calendarContainer.classList.contains('qs-hidden');
-  picker[isHidden ? 'show' : 'hide']();
-};
 
 export {
   updateContentHeaderLabel,
@@ -312,11 +315,10 @@ export {
   handleDeleteEditIconsOpacity0,
   clearAddTaskForm,
   handleAddTaskContainerDisplay,
-  dateSelect,
   handleOptionSelected,
   toggleDisplay,
   toggleMenuDisplay,
   toggleClass,
   handleAddIconContainer,
-  showTaskContent
+  showTaskContent,
 };

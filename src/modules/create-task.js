@@ -1,4 +1,5 @@
 import {
+  handleAddTaskContainerDisplay,
   handleDeleteEditIconsOpacity1,
   handleDeleteEditIconsOpacity0,
   deleteTask,
@@ -42,8 +43,6 @@ const createTaskDateDividerElement = date => {
 
 const createTask = (task, index) => {
   let { date, label, categoryColor, categoryLabel, priorityColor, priorityLabel, person, avatar } = task;
-
-  // categoryLabel = categoryLabel.toLowerCase().trim();
 
   const taskElement = createElement('div', {
     class: 'task-element',
@@ -154,11 +153,11 @@ const createTask = (task, index) => {
 
   taskLabel.textContent = label;
   categoryContainer.textContent = categoryLabel;
-  // .toLowerCase().trim();
 
   taskElement.addEventListener('mouseover', handleDeleteEditIconsOpacity1);
   taskElement.addEventListener('mouseleave', handleDeleteEditIconsOpacity0);
   taskEditContainer.addEventListener('click', editTask);
+  taskEditContainer.addEventListener('click', handleAddTaskContainerDisplay);
   taskDeleteContainer.addEventListener('click', deleteTask);
 
   priorityCircleContainer.appendChild(priorityCircle);

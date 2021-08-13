@@ -7,18 +7,19 @@ import {
   svgIconMenuNext7,
 } from './svg-variables';
 import { handleAddTaskContainerDisplay, updateMenu } from './update-UI';
-import { createDropDownOptions } from './create-add-task-form.js';
+import { createDropdownOptions } from './create-add-task-form.js';
 import { showTaskContent } from './update-UI.js';
 import { initialLoadPageLabel } from './variables';
 
 const createMenu = () => {
+
   const addElement = createElementMenu(
     'add-task',
     svgIconMenuAdd,
     false,
     'Add Task',
     {
-      click: [handleAddTaskContainerDisplay, createDropDownOptions],
+      click: [handleAddTaskContainerDisplay, createDropdownOptions],
     }
   );
 

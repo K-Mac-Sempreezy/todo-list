@@ -1,13 +1,14 @@
 import { Task } from './task-template';
-// import { format } from 'date-fns';
+import { formatISO } from 'date-fns';
 
 let myTasks = JSON.parse(localStorage.getItem('myTasks') || '[]');
 
 let initialLoadPageLabel = 'Inbox';
+let remove = true;
 
 const defaultTasks = [
   new Task(
-    new Date(),
+    formatISO(new Date()),
     '12:30 Lunch with Sarah',
     'Meet at favorite restaurant',
     '#48CFAD',
@@ -17,7 +18,7 @@ const defaultTasks = [
   ),
 
   new Task(
-    new Date(),
+    formatISO(new Date()),
     '2:30 Call Luis',
     'Check in about new project',
     '#48CFAD',
@@ -27,22 +28,15 @@ const defaultTasks = [
   ),
 ];
 
-let priorityCircleColor = '';
-const setPriorityCircleColor = string => {
-  priorityCircleColor = string;
-  console.log(`priority: ${string}`);
-};
-
-let categoryCircleColor = '';
-const setCategoryCircleColor = (string) => {
-  categoryCircleColor = string;
-  console.log(`category: ${string}`);
-};
-
-let taskToEdit;
-const setTaskToEdit = number => {
-  taskToEdit = myTasks[number];
-  console.log(taskToEdit)
+let myTasksIndex;
+let priorityCircleColor;
+let categoryCircleColor;
+const setMyTasksIndex = (number) => {
+  myTasksIndex = number;
+  if(number) {
+    priorityCircleColor = myTasks[number].priorityColor;
+    categoryCircleColor = myTasks[number].categoryColor;
+  }
 };
 
 let currentPageView = ''; //Initial Load Page
@@ -51,15 +45,14 @@ const setCurrentPageView = string => {
 };
 
 export {
+  remove,
   myTasks,
+  myTasksIndex,
   currentPageView,
-  taskToEdit,
   initialLoadPageLabel,
-  categoryCircleColor,
   priorityCircleColor,
+  categoryCircleColor,
   defaultTasks,
-  setCategoryCircleColor,
-  setPriorityCircleColor,
-  setTaskToEdit,
+  setMyTasksIndex,
   setCurrentPageView,
 };

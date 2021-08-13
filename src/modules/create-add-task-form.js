@@ -1,13 +1,12 @@
 import { library, dom } from '@fortawesome/fontawesome-svg-core';
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons/faAngleRight';
+import { createElement } from './create-element.js';
 import {
   handleOptionSelected,
   updateTasks,
-  dateSelect,
   toggleMenuDisplay,
   clearAddTaskForm,
 } from './update-UI.js';
-import { createElement } from './create-element.js';
 
 const createAddTaskForm = () => {
   const addTaskFormContainer = createElement('div', {
@@ -16,6 +15,11 @@ const createAddTaskForm = () => {
 
   const formElement = createElement('form', {
     id: 'add-task-form',
+  });
+
+  const formTypeLabel = createElement('div', {
+    id: 'add-task-form-type-label',
+    class: '',
   });
 
   const topLineContainer = createElement('form', {
@@ -120,6 +124,8 @@ const createAddTaskForm = () => {
     class: 'button',
   });
 
+  formElement.appendChild(formTypeLabel);
+
   topLineContainer.appendChild(taskNameInput);
   topLineContainer.appendChild(dateInputContainer);
   dateInputContainer.appendChild(dateInput);
@@ -153,7 +159,8 @@ const createAddTaskForm = () => {
   cancelButton.textContent = 'Cancel';
   submitButton.textContent = 'Submit';
 
-  dateInput.addEventListener('click', dateSelect);
+  // dateInput.addEventListener('click', dateSelect);
+  dateInput.addEventListener('click', () => {console.log(dateInput)});
   dropdownTitleContainerCategory.addEventListener('click', toggleMenuDisplay);
   dropdownTitleContainerPriority.addEventListener('click', toggleMenuDisplay);
   cancelButton.addEventListener('click', clearAddTaskForm);
@@ -162,7 +169,7 @@ const createAddTaskForm = () => {
   return addTaskFormContainer;
 };
 
-const createDropDownOptions = () => {
+const createDropdownOptions = () => {
   if (document.getElementById('category-0')) {
     return;
   }
@@ -212,4 +219,4 @@ const createDropDownOptions = () => {
 library.add(faAngleRight);
 dom.watch();
 
-export { createAddTaskForm, createDropDownOptions };
+export { createAddTaskForm, createDropdownOptions };

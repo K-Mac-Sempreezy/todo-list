@@ -1,11 +1,11 @@
 import { myTasks } from './initial-load.js';
 import { format, formatISO, addDays, isWithinInterval } from 'date-fns';
 import { populateAddTaskForm } from './update-UI.js';
-import { currentPageView, setTaskToEdit } from './variables.js';
+import { currentPageView, setMyTasksIndex } from './variables.js';
+import { createDropdownOptions } from './create-add-task-form.js';
 
 const editTask = e => {
   const id = e.target.id;
-  console.log(id)
   const index = id.replace(/task-edit-/g, '');
   let tasks;
 
@@ -16,11 +16,12 @@ const editTask = e => {
   } else if (currentPageView === 'Next 7 Days') {
     tasks = next7TaskFilter();
   }
-  const currentListIndex = tasks[index];
-  const taskMyTasksIndexTest = myTasks.indexOf(currentListIndex)
-  // const taskMyTasksIndexTest = myTasks[myTasks.indexOf(currentListIndex)]
-  setTaskToEdit(taskMyTasksIndexTest);
-  populateAddTaskForm();
+
+  createDropdownOptions();
+
+  const myTasksIndex = myTasks.indexOf(tasks[index]);
+  setMyTasksIndex(myTasksIndex);
+  populateAddTaskForm(myTasksIndex);
 };
 
 const capitalizeFirstLetter = string => {
@@ -47,8 +48,8 @@ const todayTaskFilter = () => {
   const todayDay = new Date();
   const today = myTasks.filter(task => {
     return (
-      formatISO(new Date(), { representation: 'date' }) ===
-      formatISO(new Date(task.date), { representation: 'date' })
+      formatISO(new Date()) ===
+      formatISO(new Date(task.date))
     );
   });
   return today;

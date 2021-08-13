@@ -1,6 +1,6 @@
 /* GLOBAL */
-
-@import "~js-datepicker/dist/datepicker.min.css";
+@import '~js-datepicker/dist/datepicker.min.css';
+/* @import '~js-datepicker/src/datepicker'; */
 
 * {
   margin: 0;
@@ -256,6 +256,11 @@ h2 {
   right: 22em;
   left: 30em;
   z-index: 5;
+}
+
+#add-task-form-type-label {
+  color: white;
+  font-size: 1em;
 }
 
 .task-priority {
