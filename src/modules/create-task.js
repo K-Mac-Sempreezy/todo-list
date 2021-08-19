@@ -1,18 +1,20 @@
 import {
-  handleAddTaskContainerDisplay,
+  displayForm,
   handleDeleteEditIconsOpacity1,
   handleDeleteEditIconsOpacity0,
-  deleteTask,
+  toggleConfirm,
+  toggleOverlay,
+  toggleDescriptionPopup,
+  populateDescriptionPopup,
 } from './update-UI.js';
 import {
   createElement,
   createElementSVG,
   createElementNS,
 } from './create-element.js';
-import {
-  editTask
-} from './edit-task.js';
+import { editTask } from './edit-task.js';
 import { format } from 'date-fns';
+import { fillPriorityCircle } from './update-UI.js';
 
 //create element functions
 
@@ -31,32 +33,64 @@ const createTaskDateDividerElement = date => {
   const taskContainer = createElement('div', {
     id: `task-divider-content-container-${formattedDate}`,
     class: 'task-divider-content-container',
-  })
+  });
 
   dateLabel.textContent = format(new Date(date), 'MMM do, yyyy').toString();
   container.appendChild(dateLabel);
   container.appendChild(taskContainer);
 
-
   return container;
 };
 
 const createTask = (task, index) => {
-  let { date, label, categoryColor, categoryLabel, priorityColor, priorityLabel, person, avatar } = task;
+  let {
+    date,
+    time,
+    label,
+    categoryColor,
+    categoryLabel,
+    priorityColor,
+    priorityLabel,
+    priorityCircleFill,
+    person,
+    avatar,
+  } = task;
 
-  const taskElement = createElement('div', {
-    class: 'task-element',
-    id: `task-element-${index}`,
+  const taskElement = createElement(
+    'div',
+    {
+      class: 'task-element',
+      id: `task-element-${index}`,
+      'data-key': index,
+    },
+    {
+      mouseover: handleDeleteEditIconsOpacity1,
+      mouseleave: handleDeleteEditIconsOpacity0,
+    }
+  );
+
+  const taskLabelContainer = createElement(
+    'div',
+    {
+      class: 'task-label-container',
+      id: `task-label-container-${index}`,
+      'data-key': index,
+    },
+    {
+      click: fillPriorityCircle,
+    }
+  );
+
+  const timeContainer = createElement('div', {
+    id: `task-time-${index}`,
+    class: 'time',
+    value: time,
     'data-key': index,
-  });
-
-  const taskLabelContainer = createElement('div', {
-    class: 'task-label-container',
-    id: `task-label-container-${index}`,
   });
 
   const taskLabel = createElement('p', {
     id: `task-label-${index}`,
+    class: 'label',
     'data-key': index,
   });
 
@@ -69,9 +103,11 @@ const createTask = (task, index) => {
       cx: 12,
       cy: 25,
       r: 10,
-      fill: 'none',
+      fill: priorityCircleFill,
       stroke: priorityColor,
       'stroke-width': '2px',
+      'data-isCircleFilled': false,
+      'data-key': index,
     }
   );
 
@@ -97,15 +133,11 @@ const createTask = (task, index) => {
     'data-key': index,
   });
 
-  const taskStatusContainer = createElementSVG(
-    'http://www.w3.org/2000/svg',
-    'svg',
-    {
-      class: 'task-icon-container status',
-      id: `task-status-${index}`,
-      'data-key': index,
-    }
-  );
+  const taskStatusIcon = createElementSVG('http://www.w3.org/2000/svg', 'svg', {
+    class: 'task-icon status',
+    id: `task-status-${index}`,
+    'data-key': index,
+  });
 
   const categoryCircle = createElementNS(
     'http://www.w3.org/2000/svg',
@@ -121,29 +153,53 @@ const createTask = (task, index) => {
     }
   );
 
-  const taskPersonContainer = createElement('div', {
-    class: 'task-icon-person person',
+  const taskPersonIcon = createElement('div', {
+    class: 'task-icon person',
     id: `task-person-${index}`,
     'data-key': index,
   });
 
-  const taskAvatarContainer = createElement('div', {
-    class: 'task-icon-container avatar',
+  const taskAvatarIcon = createElement('div', {
+    class: 'task-icon avatar',
     id: `task-avatar-${index}`,
     'data-key': index,
   });
 
-  const taskDeleteContainer = createElement('div', {
-    class: 'task-icon-container delete',
-    id: `task-delete-${index}`,
-    'data-key': index,
-  });
+  const taskDeleteIcon = createElement(
+    'div',
+    {
+      class: 'task-icon delete',
+      id: `task-delete-${index}`,
+      'data-key': index,
+    },
+    {
+      click: [toggleConfirm, toggleOverlay],
+    }
+  );
 
-  const taskEditContainer = createElement('div', {
-    class: 'task-icon-container edit',
-    id: `task-edit-${index}`,
-    'data-key': index,
-  });
+  const taskEditIcon = createElement(
+    'div',
+    {
+      class: 'task-icon edit',
+      id: `task-edit-${index}`,
+      'data-key': index,
+    },
+    {
+      click: [editTask, displayForm],
+    }
+  );
+
+  const taskDescriptionIcon = createElement(
+    'div',
+    {
+      class: 'task-icon description',
+      id: `task-description-icon-${index}`,
+      'data-key': index,
+    },
+    {
+      click: [toggleDescriptionPopup, populateDescriptionPopup],
+    }
+  );
 
   const taskAttributesContainer = createElement('div', {
     class: 'task-attributes-container',
@@ -151,25 +207,22 @@ const createTask = (task, index) => {
     'data-key': index,
   });
 
+  timeContainer.textContent = time;
   taskLabel.textContent = label;
   categoryContainer.textContent = categoryLabel;
 
-  taskElement.addEventListener('mouseover', handleDeleteEditIconsOpacity1);
-  taskElement.addEventListener('mouseleave', handleDeleteEditIconsOpacity0);
-  taskEditContainer.addEventListener('click', editTask);
-  taskEditContainer.addEventListener('click', handleAddTaskContainerDisplay);
-  taskDeleteContainer.addEventListener('click', deleteTask);
-
   priorityCircleContainer.appendChild(priorityCircle);
   taskLabelContainer.appendChild(priorityCircleContainer);
+  taskLabelContainer.appendChild(timeContainer);
   taskLabelContainer.appendChild(taskLabel);
-  taskStatusContainer.appendChild(categoryCircle);
-  taskAttributesContainer.appendChild(taskEditContainer);
-  taskAttributesContainer.appendChild(taskDeleteContainer);
+  taskStatusIcon.appendChild(categoryCircle);
+  taskAttributesContainer.appendChild(taskDescriptionIcon);
+  taskAttributesContainer.appendChild(taskEditIcon);
+  taskAttributesContainer.appendChild(taskDeleteIcon);
   taskAttributesContainer.appendChild(categoryContainer);
-  taskAttributesContainer.appendChild(taskPersonContainer);
-  taskAttributesContainer.appendChild(taskStatusContainer);
-  taskAttributesContainer.appendChild(taskAvatarContainer);
+  taskAttributesContainer.appendChild(taskPersonIcon);
+  taskAttributesContainer.appendChild(taskStatusIcon);
+  taskAttributesContainer.appendChild(taskAvatarIcon);
   taskElement.appendChild(taskLabelContainer);
   taskElement.appendChild(taskAttributesContainer);
   return taskElement;

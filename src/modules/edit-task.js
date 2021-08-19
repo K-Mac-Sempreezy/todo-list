@@ -1,14 +1,18 @@
-import { myTasks } from './initial-load.js';
+import { myTasks, setLocalStorage } from './variables.js';
 import { format, formatISO, addDays, isWithinInterval } from 'date-fns';
 import { populateAddTaskForm } from './update-UI.js';
-import { currentPageView, setMyTasksIndex } from './variables.js';
+import { currentPageView, setMyTasksIndex, setTaskEdit, myProjects } from './variables.js';
 import { createDropdownOptions } from './create-add-task-form.js';
 
 const editTask = e => {
-  const id = e.target.id;
-  const index = id.replace(/task-edit-/g, '');
-  let tasks;
+  createDropdownOptions();
+  setMyTasksIndex(e);
+  setTaskEdit(true);
+  populateAddTaskForm();
+};
 
+const taskFilterForCurrentPage = () => {
+  let tasks;
   if (currentPageView === 'Inbox') {
     tasks = inboxTaskSort();
   } else if (currentPageView === 'Today') {
@@ -16,23 +20,30 @@ const editTask = e => {
   } else if (currentPageView === 'Next 7 Days') {
     tasks = next7TaskFilter();
   }
-
-  createDropdownOptions();
-
-  const myTasksIndex = myTasks.indexOf(tasks[index]);
-  setMyTasksIndex(myTasksIndex);
-  populateAddTaskForm(myTasksIndex);
-};
-
-const capitalizeFirstLetter = string => {
-  return string[0].toUpperCase() + string.slice(1);
-};
+  return tasks;
+}
 
 const sortMyTasksByDate = () => {
-  myTasks
+  setLocalStorage('myTasks', myTasks);
+  if (myTasks.length > 1) {
+    myTasks
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .forEach(task => (task.date = formatISO(new Date(task.date))));
+    setLocalStorage('myTasks', myTasks);
+  } else {
+    return;
+  }
+};
+
+const sortMyProjectsByDate = () => {
+  if (myProjects.length > 1) {
+    myProjects
     .sort((a, b) => new Date(a.date) - new Date(b.date))
-    .forEach(task => (task.date = formatISO(new Date(task.date))));
-  localStorage.setItem('myTasks', JSON.stringify(myTasks));
+    .forEach(project => (project.date = formatISO(new Date(project.date))));
+    setLocalStorage('myProjects', myProjects);
+  } else {
+    return;
+  }
 };
 
 const inboxTaskSort = () => {
@@ -45,12 +56,9 @@ const inboxTaskSort = () => {
 };
 
 const todayTaskFilter = () => {
-  const todayDay = new Date();
+  const todayDay = format(new Date(), 'yyyy-MM-dd');
   const today = myTasks.filter(task => {
-    return (
-      formatISO(new Date()) ===
-      formatISO(new Date(task.date))
-    );
+    return todayDay === format(new Date(task.date), 'yyyy-MM-dd');
   });
   return today;
 };
@@ -73,11 +81,18 @@ const next7TaskFilter = () => {
   return next7Days;
 };
 
+const projectTaskFilter = (projectName) => {
+  return myTasks.filter(task => task.project === projectName)
+}
+
+
 export {
   editTask,
   inboxTaskSort,
   todayTaskFilter,
   next7TaskFilter,
-  capitalizeFirstLetter,
-  sortMyTasksByDate
+  sortMyTasksByDate,
+  projectTaskFilter,
+  sortMyProjectsByDate,
+  taskFilterForCurrentPage
 };

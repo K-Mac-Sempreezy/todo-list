@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="30px" height="28px" viewBox="0 0 30 28" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>next-seven-big</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="next-seven-big" transform="translate(0.000000, 1.000000)">
+            <path d="M5.01638926,3 C5.01638926,5.57142857 6.20514905,6.27558066 7.50731701,6.27558066 C8.80948496,6.27558066 10.004378,5.57142857 10.004378,3 L20.0139582,3 L20.0139582,3 C20.0139582,5.52186953 21.6029256,6.27558066 22.4825779,6.27558066 C23.3622303,6.27558066 25.0296511,5.60465628 25.0296511,3 L28,3 L28,3 C29.1045695,3 30,3.8954305 30,5 L30,25 C30,26.1045695 29.1045695,27 28,27 L2,27 C0.8954305,27 -5.30863065e-16,26.1045695 0,25 L0,5 C-5.7935996e-16,3.8954305 0.8954305,3 2,3 L5.01638926,3 L5.01638926,3 Z M28,8 L2,8 L2,24 C2,24.5522847 2.44771525,25 3,25 L3,25 L27,25 C27.5522847,25 28,24.5522847 28,24 L28,24 L28,8 Z" id="Combined-Shape" fill="#BC5DF9"></path>
+            <line x1="22.5" y1="4" x2="22.5" y2="0.5" id="Line-right-top" stroke="#BC5DF9" stroke-width="2.5" stroke-linecap="round"></line>
+            <line x1="7.5" y1="4" x2="7.5" y2="0.5" id="Line-left-top" stroke="#BC5DF9" stroke-width="2.5" stroke-linecap="round"></line>
+            <path d="M7,15 C9,15 9,15 9,13 C9,11 9,11 7,11 C5,11 5,11 5,13 C5,15 5,15 7,15 Z" id="Oval" fill="#BC5DF9"></path>
+            <path d="M7,22 C9,22 9,22 9,20 C9,18 9,18 7,18 C5,18 5,18 5,20 C5,22 5,22 7,22 Z" id="Oval-Copy-3" fill="#BC5DF9"></path>
+            <path d="M15,15 C17,15 17,15 17,13 C17,11 17,11 15,11 C13,11 13,11 13,13 C13,15 13,15 15,15 Z" id="Oval-Copy" fill="#BC5DF9"></path>
+            <path d="M15,22 C17,22 17,22 17,20 C17,18 17,18 15,18 C13,18 13,18 13,20 C13,22 13,22 15,22 Z" id="Oval-Copy-4" fill="#BC5DF9"></path>
+            <path d="M23,15 C25,15 25,15 25,13 C25,11 25,11 23,11 C21,11 21,11 21,13 C21,15 21,15 23,15 Z" id="Oval-Copy-2" fill="#BC5DF9"></path>
+            <path d="M23,22 C25,22 25,22 25,20 C25,18 25,18 23,18 C21,18 21,18 21,20 C21,22 21,22 23,22 Z" id="Oval-Copy-5" fill="#BC5DF9"></path>
+        </g>
+    </g>
+</svg>

@@ -1,24 +1,27 @@
-import datepicker from 'js-datepicker';
+import flatpickr from 'flatpickr';
+require('flatpickr/dist/themes/confetti.css');
 
-const taskDate = document.getElementById('task-date');
+let picker;
 
-const picker = datepicker(taskDate, {
-  alwaysShow: true,
-  formatter: (input, date, instance) => {
-    const value = date.toLocaleDateString()
-    input.value = value // => '1/1/2099'
-  },
-});
+const dateSelect = () => {
+  if (picker) {return};
+  picker = flatpickr('#task-date', {
+    clickOpens: true,
+    minDate: 'today',
+    enableTime: true,
+    dateFormat: 'Y-m-d H:i',
+    altInput: true,
+    altFormat: 'F j, Y H:i',
+    dateFormat: 'Y-m-d H:i',
+  });
+};
 
-taskDate.addEventListener('click', e => {
-  // THIS!!! Prevent Datepicker's event handler from hiding the calendar.
-  e.stopPropagation()
+const getPickerValue = () => {
+  return picker.input.value;
+}
 
-  // Toggle the calendar.
-  const isHidden = picker.calendarContainer.classList.contains('qs-hidden')
-  picker[isHidden ? 'show' : 'hide']()
-})
+const setPickerValue = (date) => {
+  picker.setDate(date)
+}
 
-picker.show()
-
-export { picker }
+export { picker, setPickerValue, getPickerValue, dateSelect };

@@ -8939,13 +8939,6 @@ const createAddTaskForm = () => {
     id: 'add-task-description-input',
   });
 
-  const descriptionSpan = (0,_create_element_js__WEBPACK_IMPORTED_MODULE_1__.createElement)('span', {
-    id: 'description-span',
-    class: 'textarea',
-    role: 'textbox',
-    contenteditable: 'true',
-  });
-
   const dropdownWrapper = (0,_create_element_js__WEBPACK_IMPORTED_MODULE_1__.createElement)('div', {
     id: 'dropdown-wrapper',
   });
@@ -9052,7 +9045,7 @@ const createAddTaskForm = () => {
   dropdownTitleContainerCategory.addEventListener('click', _update_UI_js__WEBPACK_IMPORTED_MODULE_2__.toggleMenuDisplay);
   dropdownTitleContainerPriority.addEventListener('click', _update_UI_js__WEBPACK_IMPORTED_MODULE_2__.toggleMenuDisplay);
   cancelButton.addEventListener('click', _update_UI_js__WEBPACK_IMPORTED_MODULE_2__.clearAddTaskForm);
-  submitButton.addEventListener('click', _update_UI_js__WEBPACK_IMPORTED_MODULE_2__.updateTasks);
+  submitButton.addEventListener('click', _update_UI_js__WEBPACK_IMPORTED_MODULE_2__.makeNewTask);
 
   return addTaskFormContainer;
 };
@@ -9968,7 +9961,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "updateContentHeaderLabel": () => (/* binding */ updateContentHeaderLabel),
 /* harmony export */   "updateTaskContent": () => (/* binding */ updateTaskContent),
-/* harmony export */   "updateTasks": () => (/* binding */ updateTasks),
+/* harmony export */   "makeNewTask": () => (/* binding */ makeNewTask),
 /* harmony export */   "updateMenu": () => (/* binding */ updateMenu),
 /* harmony export */   "updateMenuCount": () => (/* binding */ updateMenuCount),
 /* harmony export */   "clearTaskWrapper": () => (/* binding */ clearTaskWrapper),
@@ -10096,7 +10089,7 @@ const populateAddTaskForm = (number) => {
   const addTaskForm = document.getElementById('add-task-form-container');
   const formLabel = document.getElementById('add-task-input');
   // const dateElement = dateP;
-  const formDescription = document.getElementById('description-span');
+  const formDescription = document.getElementById('add-task-description-input');
   const formCategory = document.getElementById('dropdown-title-category');
   const formPriority = document.getElementById('dropdown-title-priority');
 
@@ -10114,13 +10107,13 @@ const updateContentHeaderLabel = contentLabel => {
   label.textContent = contentLabel;
 };
 
-const updateTasks = () => {
+const makeNewTask = () => {
   const taskToEdit = _variables_js__WEBPACK_IMPORTED_MODULE_1__.myTasks[_variables_js__WEBPACK_IMPORTED_MODULE_1__.myTasksIndex];
   const taskWrapper = document.getElementById('task-wrapper');
   const date = document.getElementById('task-date').value;
   const label = document.getElementById('add-task-input').value;
   const description = document.getElementById(
-    'description-span'
+    'add-task-description-input'
   ).textContent;
   const categoryLabel = document.getElementById(
     'dropdown-title-category'
@@ -10225,7 +10218,7 @@ const clearAddTaskForm = () => {
   document.getElementById('add-task-form-container').style.display = 'none';
   document.getElementById('add-task-input').value = '';
   document.getElementById('task-date').value = '';
-  document.getElementById('description-span').value = '';
+  document.getElementById('add-task-description-input').value = '';
   document.getElementById('dropdown-title-category').textContent = 'Category';
   document.getElementById('dropdown-title-priority').textContent = 'Priority';
   (0,_variables_js__WEBPACK_IMPORTED_MODULE_1__.setMyTasksIndex)(null);

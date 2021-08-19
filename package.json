@@ -41,7 +41,7 @@
     "@fortawesome/free-regular-svg-icons": "^5.15.3",
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
     "date-fns": "^2.23.0",
-    "js-datepicker": "^5.18.0",
+    "flatpickr": "^4.6.9",
     "latest-version": "^5.1.0",
     "lodash": "^4.17.21"
   }
