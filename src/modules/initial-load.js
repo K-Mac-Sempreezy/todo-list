@@ -5,7 +5,7 @@ import { createContent } from './create-content.js';
 import { createAddTaskForm } from './create-add-task-form.js';
 import { initializeContent } from './update-UI.js';
 import { createConfirmContainer } from './create-confirmation-box.js';
-import { createOverlay } from './create-overlay.js';
+import { createOverlay } from './create-overlay';
 import { createDescriptionPopup } from './create-description-box.js';
 
 const pageLoad = () => {

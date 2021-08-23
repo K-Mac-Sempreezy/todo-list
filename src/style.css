@@ -281,7 +281,7 @@ textarea:focus::-webkit-input-placeholder, input:focus::-webkit-input-placeholde
 
 .count {
   font-size: 12px;
-  margin: .5em;
+  margin: .65em .5em .5em .8em;
   font-weight: 500;
   color: rgb(121, 121, 121);
 }

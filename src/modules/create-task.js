@@ -16,7 +16,6 @@ import {
 import { editTask } from './edit-task.js';
 import { format } from 'date-fns';
 
-
 const createTaskDateDividerElement = date => {
   const formattedDate = format(new Date(date), 'MM-dd-yyyy');
   const container = createElement('div', {

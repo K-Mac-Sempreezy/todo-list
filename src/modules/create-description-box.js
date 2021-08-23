@@ -1,7 +1,5 @@
 import { createElement } from './create-element.js';
-import {
-  toggleDescriptionPopup,
-} from './update-UI.js';
+import { toggleDescriptionPopup } from './update-UI.js';
 
 const createDescriptionPopup = () => {
   const container = createElement('div', {

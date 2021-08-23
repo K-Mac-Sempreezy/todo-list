@@ -12,6 +12,7 @@ import {
   clearMyTasksToDelete,
   currentPageView,
   // defaultTasks,
+  projectEdit,
   initialLoadPageLabel,
   isFirstTime,
   myProjects,
@@ -30,6 +31,9 @@ import {
   setMyTasksToDelete,
   setPriorityCircleColor,
   setLocalStorage,
+  setProjectEdit,
+  setProjectName,
+  projectName,
   setTaskEdit,
   taskEdit,
 } from './variables.js';
@@ -45,6 +49,7 @@ import { Task, Project } from './class-templates.js';
 import { format } from 'date-fns';
 import { dateSelect, getPickerValue, setPickerValue } from './date';
 import { createElementMenuProject } from './create-menu.js';
+import { createDropdownOptions } from './create-add-task-form.js';
 
 //
 //
@@ -77,16 +82,16 @@ const toggleConfirm = e => {
       popup.style.display = 'flex';
       setMyTasksIndex(e);
       text.textContent = 'Are you sure you want to delete this task?';
-    }    
+    }
   } else if (id.includes('project')) {
     if (popup.style.display === 'none') {
       popup.style.display = 'flex';
       setMyProjectsIndex(e);
       text.textContent = `This will delete all tasks in project. Press delete to confirm.`;
-    };
+    }
   } else if (id.includes('confirm')) {
     popup.style.display = 'none';
-    if (!!myProjectsIndex || !!myTasksIndex){
+    if (!!myProjectsIndex || !!myTasksIndex) {
       return;
     } else {
       reset();
@@ -107,8 +112,21 @@ const initializeMenuNavStyle = () => {
   }
 };
 
+// const updateMenuNavStyle = () => {
+//   if (currentPageView.type === 'Menu') {
+//     const inbox = document.getElementById('menu-inbox-label');
+//     const today = document.getElementById('menu-today-label');
+//     const next7 = document.getElementById('menu-next-seven-label');
+//   } else if (currentPageView.type === 'Project') {
+//     const projectMenuLabels = document.querySelectorAll(
+//       '.menu-element-project-label'
+//     );
+//     projectMenuLabels.forEach(label => console.log(label.textContent))
+//     // projectMenuLabels.filter(label => label === projectName)
+//   }
+// };
+
 const toggleDescriptionPopup = e => {
-  console.log(e);
   e.stopPropagation();
   const element = document.getElementById(`description-popup`);
   if (!element.style.display) {
@@ -122,6 +140,42 @@ const toggleDescriptionPopup = e => {
   }
 };
 
+const populateDescriptionPopup = e => {
+  let element;
+  const id = e.target.id;
+  const date = document.getElementById('description-date');
+  const time = document.getElementById('description-time');
+  const task = document.getElementById('description-task');
+  const descripton = document.getElementById('description-description');
+  const priority = document.getElementById('description-priority-content');
+  const category = document.getElementById('description-category-content');
+  const project = document.getElementById('description-project-content');
+  
+  if (id.includes('task')) {
+    setMyTasksIndex(e);
+    element = myTasks[myTasksIndex];
+    console.log(element);
+    date.textContent = format(new Date(element.date), 'MMM do, yyyy');
+    time.textContent = element.time;
+    task.textContent = element.label;
+    descripton.textContent = element.description;
+    priority.textContent = element.priorityLabel;
+    category.textContent = element.categoryLabel;
+    project.textContent = element.project.toLowerCase();
+  } else if (id.includes('project')){
+    setMyProjectsIndex(e);
+    element = myProjects[myProjectsIndex];
+    console.log(element)
+    date.textContent = format(new Date(element.date), 'MMM do, yyyy');
+    time.textContent = element.time;
+    task.textContent = element.name;
+    descripton.textContent = element.description;
+    priority.textContent = element.priorityLabel;
+    category.textContent = element.categoryLabel;
+    project.textContent = ' ... ';
+  }
+};
+
 const toggleDisplay = elem => {
   const curDisplayStyle = elem.style.display;
 
@@ -132,7 +186,7 @@ const toggleDisplay = elem => {
   }
 };
 
-const toggleMenuDisplay = e => {
+const toggleDropdownMenuDisplay = e => {
   let menu;
   let icon;
   if (e.target.id === 'add-task-dropdown-title-container-category') {
@@ -176,8 +230,8 @@ const fillPriorityCircle = e => {
 };
 
 const displayForm = e => {
+  createDropdownOptions();
   const id = e.target.id;
-  console.log(id);
   const key = findElementDataKey(e);
   const overlay = document.getElementById('overlay');
   const container = document.getElementById('add-task-form-container');
@@ -186,30 +240,40 @@ const displayForm = e => {
   const projectOptions = document.getElementById(
     'add-task-dropdown-container-project'
   );
-  const classList = projectOptions.getAttribute('class');
+  const projectClassList = projectOptions.getAttribute('class');
 
   container.style.display = 'flex';
   overlay.style.display = 'flex';
+
   if (id === 'menu-add-task-element-container') {
+    if (projectClassList.includes('display-none')) {
+      toggleClass(projectOptions, 'display-none');
+    }
     formLabel.textContent = 'Add Task';
     input.placeholder = 'Add task name';
     setAddTask(true);
   } else if (id === 'menu-add-project-element-container') {
+    if (!projectClassList.includes('display-none')) {
+      toggleClass(projectOptions, 'display-none');
+    }
     formLabel.textContent = 'Add Project';
     input.placeholder = 'Add project name';
     setAddProject(true);
-    if (classList.includes('display-none')) {
-      return;
-    }
-    toggleClass(projectOptions, 'display-none');
   } else if (id === `task-edit-${key}`) {
+    if (projectClassList.includes('display-none')) {
+      toggleClass(projectOptions, 'display-none');
+    }
     formLabel.textContent = 'Edit Task';
     input.placeholder = 'Edit task name';
     setTaskEdit(true);
-    if (classList.includes('display-none')) {
+  } else if (id === `menu-project-edit-container-${key}`) {
+    if (!projectClassList.includes('display-none')) {
       toggleClass(projectOptions, 'display-none');
     }
-  } //edit Project goes here soon
+    formLabel.textContent = 'Edit Project';
+    input.placeholder = 'Edit Project Name';
+    setProjectEdit(true);
+  }
 };
 
 const handleContentHeaderLabel = contentLabel => {
@@ -224,50 +288,41 @@ const handleContentHeaderIcon = svg => {
 
 const handleView = e => {
   e.stopPropagation();
-  const key = findElementDataKey(e);
   const inboxLabel = document.getElementById('menu-inbox-label');
   const todayLabel = document.getElementById('menu-today-label');
   const next7Label = document.getElementById('menu-next-seven-label');
+  const allLabels = document.querySelectorAll('.menu-element-label');
+  const key = findElementDataKey(e);
   const projectLabel = document.getElementById(`project-label-${key}`);
-  const children = document.querySelectorAll('.menu-element-label');
+  const id = e.target.id;
 
-  for (let item of children) {
+  for (let item of allLabels) {
     item.style.fontWeight = '300';
   }
-
   sortMyTasksByDate();
   setLocalStorage('myTasks', myTasks);
   setLocalStorage('myProjects', myProjects);
   clearTaskWrapper();
 
-  if (e.target.id === 'menu-today-element-container') {
-    inboxLabel.style.fontWeight = '300';
+  if (id.includes('today')) {
     todayLabel.style.fontWeight = '700';
-    next7Label.style.fontWeight = '300';
     setCurrentPageView('Today', 'Menu');
     handleContentHeaderLabel('Today');
     populateTaskWrapper(todayTaskFilter());
     handleContentHeaderIcon(svgTodayBig);
-  } else if (e.target.id === 'menu-inbox-element-container') {
+  } else if (id.includes('inbox')) {
     inboxLabel.style.fontWeight = '700';
-    todayLabel.style.fontWeight = '300';
-    next7Label.style.fontWeight = '300';
     setCurrentPageView('Inbox', 'Menu');
     handleContentHeaderLabel('Inbox');
     populateTaskWrapper(inboxTaskSort());
     handleContentHeaderIcon(svgInboxBig);
-  } else if (e.target.id === 'menu-next-seven-element-container') {
-    inboxLabel.style.fontWeight = '300';
-    todayLabel.style.fontWeight = '300';
+  } else if (id.includes('seven')) {
     next7Label.style.fontWeight = '700';
     setCurrentPageView('Next 7 Days', 'Menu');
     handleContentHeaderLabel('Next 7 Days');
     populateTaskWrapper(next7TaskFilter());
     handleContentHeaderIcon(svgNextSevenBig);
-  } else if (e.target.id === `project-menu-element-container-${key}`) {
-    inboxLabel.style.fontWeight = '300';
-    todayLabel.style.fontWeight = '300';
-    next7Label.style.fontWeight = '300';
+  } else if (id.includes('project')) {
     projectLabel.style.fontWeight = '700';
     setCurrentPageView(projectLabel.textContent, 'Project');
     handleContentHeaderLabel(projectLabel.textContent);
@@ -304,38 +359,76 @@ const handleDeleteEditIconsOpacity0 = e => {
   }
 };
 
-const populateForm = () => {
-  const taskToEdit = myTasks[myTasksIndex];
-  let {
-    date,
-    time,
-    label,
-    description,
-    categoryColor,
-    priorityColor,
-    categoryLabel,
-    priorityLabel,
-    project,
-    priorityCircleFill,
-    person,
-    avatar,
-  } = taskToEdit;
+const populateForm = (objectCategory, number) => {
+  console.log(number)
+  createDropdownOptions();
+  let objectToEdit;
+  console.log({ objectCategory, number });
+  if (objectCategory === 'Project') {
+    objectToEdit = myProjects[number];
+    let {
+      name,
+      date,
+      time,
+      description,
+      categoryColor,
+      priorityColor,
+      categoryLabel,
+      priorityLabel,
+    } = objectToEdit;
 
-  const formLabel = document.getElementById('add-task-input');
-  const formDescription = document.getElementById('add-task-description-input');
-  const formCategory = document.getElementById('dropdown-title-category');
-  const formPriority = document.getElementById('dropdown-title-priority');
-  const formProject = document.getElementById('dropdown-title-project');
+    const formLabel = document.getElementById('add-task-input');
+    const formDescription = document.getElementById(
+      'add-task-description-input'
+    );
+    const formCategory = document.getElementById('dropdown-title-category');
+    const formPriority = document.getElementById('dropdown-title-priority');
+    // const formProject = document.getElementById('dropdown-title-project');
 
-  dateSelect();
-  setPickerValue(date);
-  setCategoryCircleColor(categoryColor);
-  setPriorityCircleColor(priorityColor);
-  formLabel.value = label;
-  formDescription.value = description;
-  formCategory.textContent = capitalizeFirstLetter(categoryLabel);
-  formPriority.textContent = capitalizeFirstLetter(priorityLabel);
-  formProject.textContent = capitalizeFirstLetter(project);
+    dateSelect();
+    setProjectName(name);
+    setPickerValue(date);
+    setCategoryCircleColor(categoryColor);
+    setPriorityCircleColor(priorityColor);
+    formLabel.value = name;
+    formDescription.value = description;
+    formCategory.textContent = capitalizeFirstLetter(categoryLabel);
+    formPriority.textContent = capitalizeFirstLetter(priorityLabel);
+    // formProject.textContent = capitalizeFirstLetter(project);
+  } else if (objectCategory === 'Task') {
+    objectToEdit = myTasks[number];
+    let {
+      date,
+      time,
+      label,
+      description,
+      categoryColor,
+      priorityColor,
+      categoryLabel,
+      priorityLabel,
+      project,
+      priorityCircleFill,
+      person,
+      avatar,
+    } = objectToEdit;
+    const formLabel = document.getElementById('add-task-input');
+    const formDescription = document.getElementById(
+      'add-task-description-input'
+    );
+    const formCategory = document.getElementById('dropdown-title-category');
+    const formPriority = document.getElementById('dropdown-title-priority');
+    const formProject = document.getElementById('dropdown-title-project');
+
+    dateSelect();
+    setPickerValue(date);
+    setCategoryCircleColor(categoryColor);
+    setPriorityCircleColor(priorityColor);
+    formLabel.value = label;
+    formDescription.value = description;
+    formCategory.textContent = capitalizeFirstLetter(categoryLabel);
+    formPriority.textContent = capitalizeFirstLetter(priorityLabel);
+    formProject.textContent = capitalizeFirstLetter(project);
+  }
 };
 
 const populateTaskWrapper = sortedTasks => {
@@ -369,34 +462,13 @@ const populateTaskWrapper = sortedTasks => {
   });
 };
 
-const populateDescriptionPopup = e => {
-  // const popup = document.getElementById('description-popup');
-  const date = document.getElementById('description-date');
-  const time = document.getElementById('description-time');
-  const task = document.getElementById('description-task');
-  const descripton = document.getElementById('description-description');
-  const priority = document.getElementById('description-priority-content');
-  const category = document.getElementById('description-category-content');
-  setMyTasksIndex(e);
-  const element = myTasks[myTasksIndex];
-  console.log(element);
-
-  date.textContent = format(new Date(element.date), 'MMM do, yyyy');
-  time.textContent = element.time;
-  task.textContent = element.label;
-  descripton.textContent = element.description;
-  priority.textContent = element.priorityLabel;
-  category.textContent = element.categoryLabel;
-};
-
 //
 //
 // Update
 
 const editTaskToEdit = () => {
-  const taskToEdit = myTasks[myTasksIndex];
+  const objectToEdit = myTasks[myTasksIndex];
   const date = getPickerValue();
-  const time = getPickerValue();
   const label = document.getElementById('add-task-input').value;
   const description = document.getElementById(
     'add-task-description-input'
@@ -412,22 +484,61 @@ const editTaskToEdit = () => {
   ).textContent;
   document.getElementById('');
 
-  if (!date || !taskToEdit) {
+  if (!date || !objectToEdit) {
     return;
   }
 
   if (taskEdit) {
-    taskToEdit.date = format(new Date(date), 'yyyy-MM-dd HH:mm');
-    taskToEdit.time = format(new Date(date), 'p');
-    taskToEdit.label = label;
-    taskToEdit.description = description;
-    taskToEdit.priorityLabel = priorityLabel.toLowerCase().trim();
-    taskToEdit.categoryLabel = categoryLabel.toLowerCase().trim();
-    taskToEdit.priorityColor = priorityCircleColor;
-    taskToEdit.categoryColor = categoryCircleColor;
-    taskToEdit.project = projectLabel;
+    objectToEdit.date = format(new Date(date), 'yyyy-MM-dd HH:mm');
+    objectToEdit.time = format(new Date(date), 'p');
+    objectToEdit.label = label;
+    objectToEdit.description = description;
+    objectToEdit.priorityLabel = priorityLabel.toLowerCase().trim();
+    objectToEdit.categoryLabel = categoryLabel.toLowerCase().trim();
+    objectToEdit.priorityColor = priorityCircleColor;
+    objectToEdit.categoryColor = categoryCircleColor;
+    objectToEdit.project = projectLabel;
+    sortMyTasksByDate();
     setLocalStorage('myTasks', myTasks);
 
+    reset();
+  }
+};
+
+const editProjectToEdit = () => {
+  const objectToEdit = myProjects[myProjectsIndex];
+  const date = getPickerValue();
+  const name = document.getElementById('add-task-input').value;
+  const description = document.getElementById(
+    'add-task-description-input'
+  ).value;
+  const categoryLabel = document.getElementById(
+    'dropdown-title-category'
+  ).textContent;
+  const priorityLabel = document.getElementById(
+    'dropdown-title-priority'
+  ).textContent;
+  // const projectLabel = document.getElementById(
+  //   'dropdown-title-project'
+  // ).textContent;
+  document.getElementById('');
+
+  if (!date || !objectToEdit) {
+    return;
+  }
+
+  if (projectEdit) {
+    objectToEdit.date = format(new Date(date), 'yyyy-MM-dd HH:mm');
+    objectToEdit.time = format(new Date(date), 'p');
+    objectToEdit.name = name;
+    objectToEdit.description = description;
+    objectToEdit.priorityLabel = priorityLabel.toLowerCase().trim();
+    objectToEdit.categoryLabel = categoryLabel.toLowerCase().trim();
+    objectToEdit.priorityColor = priorityCircleColor;
+    objectToEdit.categoryColor = categoryCircleColor;
+    // objectToEdit.project = projectLabel;
+    setLocalStorage('myProjects', myProjects);
+    updateTasksProjectName(name);
     reset();
   }
 };
@@ -515,6 +626,13 @@ const makeNewProjectItem = () => {
   reset();
 };
 
+const updateTasksProjectName = newProjectName => {
+  myTasks
+    .filter(task => task.project === projectName)
+    .forEach(task => (task.project = newProjectName));
+  setProjectName(null);
+};
+
 const reset = () => {
   clearForm();
   clearMyTasksToDelete();
@@ -525,12 +643,17 @@ const reset = () => {
   setMyTasksIndex();
   setPriorityCircleColor('');
   setTaskEdit(false);
+  setProjectEdit(false);
   updateMenuCount();
   updateProjectMenu();
   updateTaskContent();
 };
 
 const updateTaskContent = () => {
+  const inboxLabel = document.getElementById('menu-inbox-label');
+  const todayLabel = document.getElementById('menu-today-label');
+  const next7Label = document.getElementById('menu-next-seven-label');
+
   if (currentPageView.type === 'Menu') {
     if (currentPageView.pageLabel === 'Inbox') {
       populateTaskWrapper(inboxTaskSort());
@@ -567,8 +690,10 @@ const updateProjectMenu = () => {
     menu.appendChild(createElementMenuProject(project, index));
   });
 
-  if (document.getElementById('menu-project-container').firstElementChild) {
-    toggleClass(subheader, 'display-none');
+  if (menu.firstElementChild) {
+    if (subheader.getAttribute('class').includes('display-none')) {
+      toggleClass(subheader, 'display-none');
+    }
   }
 };
 
@@ -633,30 +758,25 @@ const deleteProject = () => {
 };
 
 const deleteTask = () => {
-  myTasks.splice(myTasks[myTasksIndex], 1);
+  myTasks.splice(myTasksIndex, 1);
   reset();
 };
-
-
 
 //
 //
 //Utility
 
-const consoleLogE = e => {
-  console.log(e.target.id);
-};
-
 const initializeContent = () => {
-  populateTaskWrapper(inboxTaskSort());
-  initializeMenuNavStyle();
-  updateMenuCount();
-  dateSelect();
-  updateProjectMenu();
   setLocalStorage('myTasks', myTasks);
   setLocalStorage('myProjects', myProjects);
   setLocalStorage('isFirstTime', isFirstTime);
   setCurrentPageView(initialLoadPageLabel, 'Menu');
+  populateTaskWrapper(inboxTaskSort());
+  initializeMenuNavStyle();
+  updateMenuCount();
+  dateSelect();
+  createDropdownOptions();
+  updateProjectMenu();
 
   if (isFirstTime.length <= 0) {
     setIsFirstTime(false);
@@ -692,15 +812,18 @@ const submitHandler = () => {
   const overlay = document.getElementById('overlay');
   overlay.style.display = 'none';
 
-  if (!taskEdit && !addProject & addTask) {
+  if (!taskEdit && !addProject && !projectEdit && addTask) {
     makeNewTaskItem();
     console.log('addTask');
-  } else if (!taskEdit && addProject & !addTask) {
+  } else if (!taskEdit && addProject && !projectEdit && !addTask) {
     makeNewProjectItem();
     console.log('addProject');
-  } else if (taskEdit && !addProject & !addTask) {
+  } else if (taskEdit && !addProject && !projectEdit && !addTask) {
     editTaskToEdit();
     console.log('taskEdit');
+  } else if (!taskEdit && !addProject && projectEdit && !addTask) {
+    editProjectToEdit();
+    console.log('projectEdit');
   }
 };
 
@@ -714,12 +837,12 @@ const findElementDataKey = e => {
 };
 
 const toggleClass = (elem, className) => {
-  const classList = elem.getAttribute('class');
-  if (classList.includes(className)) {
-    const newClasses = classList.replace(className, '').trim();
+  const projectClassList = elem.getAttribute('class');
+  if (projectClassList.includes(className)) {
+    const newClasses = projectClassList.replace(className, '').trim();
     elem.setAttribute('class', newClasses);
   } else {
-    const newClassList = `${classList} ${className}`;
+    const newClassList = `${projectClassList} ${className}`;
     elem.setAttribute('class', newClassList);
   }
   return elem;
@@ -742,14 +865,12 @@ const handleOptionSelected = e => {
   toggleClass(icon, 'rotate-90');
 
   titleElem.textContent = newValue;
-  titleElem.appendChild(icon);
 };
 
 export {
   capitalizeFirstLetter,
   clearTaskWrapper,
   clearForm,
-  consoleLogE,
   deleteHandler,
   deleteTask,
   deleteProject,
@@ -776,9 +897,10 @@ export {
   toggleOverlay,
   toggleDisplay,
   toSpinalCase,
-  toggleMenuDisplay,
+  toggleDropdownMenuDisplay,
   toggleClass,
   updateTaskContent,
   updateProjectMenu,
   updateMenuCount,
+  reset,
 };

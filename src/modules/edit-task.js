@@ -1,15 +1,11 @@
 import { myTasks, setLocalStorage } from './variables.js';
 import { format, formatISO, addDays, isWithinInterval } from 'date-fns';
 import { populateForm } from './update-UI.js';
-import { currentPageView, setMyTasksIndex, setTaskEdit } from './variables.js';
-import { createDropdownOptions } from './create-add-task-form.js';
+import { currentPageView, setMyTasksIndex } from './variables.js';
 import { projectTaskFilter } from './edit-project.js';
 
 const editTask = e => {
-  createDropdownOptions();
-  setMyTasksIndex(e);
-  setTaskEdit(true);
-  populateForm();
+  populateForm('Task', setMyTasksIndex(e));
 };
 
 const taskFilterForCurrentPage = () => {
@@ -25,6 +21,7 @@ const taskFilterForCurrentPage = () => {
   } else if (currentPageView.type === 'Project') {
     tasks = projectTaskFilter(currentPageView.pageLabel);
   }
+  console.log(tasks);
   return tasks;
 };
 

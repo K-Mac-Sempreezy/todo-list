@@ -22,18 +22,23 @@ let initialLoadPageLabel = 'Inbox';
 let initialLoadPageIcon = svgInboxBig;
 let remove = true;
 let taskEdit = false;
+let projectEdit = false;
 let addProject = false;
 let addTask = false;
+let projectName;
 let myTasksIndex;
 let myProjectsIndex;
 let priorityCircleColor;
 let categoryCircleColor;
 let myTasksToDelete = [];
+
 // let myProjectsIndex;
+
 //
 //
 //
 // Menu Items
+
 const menuElementsList = [
   new MenuElement('add-task', svgIconMenuAdd, false, 'Add Task', {
     click: [displayForm, createDropdownOptions, dateSelect],
@@ -60,6 +65,7 @@ const menuElementsList = [
 //
 //
 //Color Attribute Objects
+
 const colorLists = {
   categoryColorList: {
     Personal: 'hsla(284, 100%, 50%, 1)', //Electric Violet [rgba(189, 0, 255, 1), #BD00FF]
@@ -112,6 +118,9 @@ const setAddProject = (value) => {
   addProject = value;
 }
 
+const setProjectName = (projectNameToEdit) => {
+  projectName = projectNameToEdit;
+}
 const setIsFirstTime = (value) => {
     isFirstTime = { isFirstTime: value };
     setLocalStorage('isFirstTime', isFirstTime);
@@ -140,6 +149,10 @@ const setTaskEdit = value => {
   taskEdit = value;
 };
 
+const setProjectEdit = value => {
+  projectEdit = value;
+};
+
 const setMyProjectsIndex = (e) => {
   if (!e) {
     myProjectsIndex = null;
@@ -149,7 +162,7 @@ const setMyProjectsIndex = (e) => {
   setLocalStorage('myProjects', myProjects);
   const key = findElementDataKey(e);
   myProjectsIndex = key;
-  console.log(myProjectsIndex)
+  return key;
 }
 
 const setMyTasksIndex = e => {
@@ -163,6 +176,8 @@ const setMyTasksIndex = e => {
   const element = document.getElementById(`task-element-${key}`);
   let tasks = taskFilterForCurrentPage();
   myTasksIndex = myTasks.indexOf(tasks[key]);
+  console.log(myTasksIndex)
+  return myTasksIndex;
 };
 
 const setPriorityCircleColor = string => {
@@ -178,7 +193,9 @@ export {
   myTasks,
   myProjects,
   taskEdit,
+  projectEdit,
   addProject,
+  projectName,
   isFirstTime,
   addTask,
   myTasksIndex,
@@ -192,9 +209,11 @@ export {
   menuElementsList,
   colorLists,
   defaultTasks,
+  setProjectName,
   setIsFirstTime,
   setAddTask,
   setAddProject,
+  setProjectEdit,
   clearMyTasksToDelete,
   setLocalStorage,
   setPriorityCircleColor,

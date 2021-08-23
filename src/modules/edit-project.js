@@ -1,11 +1,13 @@
-import { myProjectsIndex, myTasksToDelete, setMyProjectsIndex, myTasks } from "./variables";
+import { setMyProjectsIndex, myTasks, myProjects } from "./variables";
+import { populateForm } from "./update-UI";
+
+const editProject = e => {
+  populateForm('Project', setMyProjectsIndex(e));
+};
 
 const projectTaskFilter = (projectName) => {
-  console.log(projectName)
   return myTasks.filter(task => task.project === projectName)
 }
-
-// myTasks.forEach(task => setMyProjectsIndex(myTasks.indexOf(task.project === projectName)))
 
 const sortMyProjectsByDate = () => {
   if (myProjects.length > 1) {
@@ -18,4 +20,4 @@ const sortMyProjectsByDate = () => {
   }
 };
 
-export { projectTaskFilter, sortMyProjectsByDate };
+export { projectTaskFilter, sortMyProjectsByDate, editProject };

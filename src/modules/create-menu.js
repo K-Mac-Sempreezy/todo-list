@@ -3,15 +3,19 @@ import {
   createElementSVG,
   createElementNS,
 } from './create-element';
-import { inboxTaskSort, todayTaskFilter, next7TaskFilter } from './edit-task';
-import { menuElementsList } from './variables';
+import { inboxTaskSort, todayTaskFilter, next7TaskFilter } from './edit-task.js';
+import { editProject, projectTaskFilter } from './edit-project';
+import { currentPageView, menuElementsList } from './variables';
 import {
   handleView,
-  deleteProject,
+  displayForm,
+  // deleteProject,
   toggleConfirm, 
   toggleOverlay,
   handleDeleteEditIconsOpacity1,
   handleDeleteEditIconsOpacity0,
+  toggleDescriptionPopup,
+  populateDescriptionPopup,
 } from './update-UI';
 import { svgEdit, svgTrash, svgDescription } from './svg-variables';
 
@@ -223,7 +227,11 @@ const createElementMenuProject = (project, index) => {
     id: `menu-project-edit-container-${index}`,
     class: 'pointer-events project-icon-container',
     'data-key': index,
-  });
+  },
+    {
+      click: [displayForm, editProject],
+    }
+  );
 
   const editIcon = createElementSVG(
     'http://www.w3.org/2000/svg',
@@ -232,16 +240,15 @@ const createElementMenuProject = (project, index) => {
       class: 'menu-project-icon pencil',
       id: `project-edit-${index}`,
       'data-key': index,
-    },
-    {
-      // click: [editTask, displayForm],
-    }
-  );
+    });
 
   const descriptionContainer = createElement('div', {
     id: `menu-project-description-container-${index}`,
     class: 'pointer-events project-icon-container',
     'data-key': index,
+  },
+  {
+    click: [toggleDescriptionPopup, populateDescriptionPopup],
   });
 
   const descriptionIcon = createElementSVG(
@@ -257,10 +264,14 @@ const createElementMenuProject = (project, index) => {
     }
   );
 
+  countNumber.textContent = projectTaskFilter(name).length;
   deleteIcon.innerHTML = svgTrash;
   editIcon.innerHTML = svgEdit;
   descriptionIcon.innerHTML = svgDescription;
   label.textContent = name;
+  if (name === currentPageView.pageLabel) {
+    label.style.fontWeight = '700';
+  }
 
   projectIconContainer.appendChild(projectIcon);
   identityContainer.appendChild(projectIconContainer)

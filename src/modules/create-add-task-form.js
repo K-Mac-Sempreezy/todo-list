@@ -8,8 +8,10 @@ import {
 import {
   handleOptionSelected,
   submitHandler,
-  toggleMenuDisplay,
-  clearForm,
+  toggleDropdownMenuDisplay,
+  reset,
+  capitalizeFirstLetter,
+  toggleClass,
 } from './update-UI.js';
 
 const createAddTaskForm = () => {
@@ -73,7 +75,7 @@ const createAddTaskForm = () => {
       class: 'container',
     },
     {
-      click: toggleMenuDisplay,
+      click: toggleDropdownMenuDisplay,
     }
   );
 
@@ -104,7 +106,7 @@ const createAddTaskForm = () => {
       class: 'container',
     },
     {
-      click: toggleMenuDisplay,
+      click: toggleDropdownMenuDisplay,
     }
   );
 
@@ -136,7 +138,7 @@ const createAddTaskForm = () => {
       class: 'container',
     },
     {
-      click: toggleMenuDisplay,
+      click: toggleDropdownMenuDisplay,
     }
   );
 
@@ -166,7 +168,7 @@ const createAddTaskForm = () => {
       class: 'button',
     },
     {
-      click: clearForm,
+      click: reset,
     }
   );
 
@@ -232,6 +234,29 @@ const createDropdownOptions = () => {
   const priorityMenu = document.getElementById('option-menu-priority');
   const projectMenu = document.getElementById('option-menu-project');
 
+  if (projectMenu.getAttribute('class').includes('display-none')) {
+    toggleClass(projectMenu, 'display-none');
+  }
+
+  if (categoryMenu.firstElementChild) {
+    while (categoryMenu.firstElementChild){
+      categoryMenu.firstElementChild.remove();
+    }
+  }
+
+  if (priorityMenu.firstElementChild) {
+    while (priorityMenu.firstElementChild){
+      priorityMenu.firstElementChild.remove();
+    }
+  }
+  
+  if (projectMenu.firstElementChild) {
+    while (projectMenu.firstElementChild){
+      projectMenu.firstElementChild.remove();
+    }
+  }
+
+
   Object.entries(colorLists).forEach(([k, v]) => {
     Object.entries(v).forEach(([key, value], index) => {
       const op = createElement(
@@ -257,7 +282,6 @@ const createDropdownOptions = () => {
   });
 
   myProjects.forEach((project, index) => {
-    console.log(project)
     const op = createElement('div', {
       id: `priority-${index}`,
       class: 'option',
@@ -267,7 +291,7 @@ const createDropdownOptions = () => {
       click: handleOptionSelected,
     })
     
-    op.textContent = project.name;
+    op.textContent = capitalizeFirstLetter(project.name);
     projectMenu.appendChild(op);
   });
 };
