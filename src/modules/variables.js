@@ -32,8 +32,6 @@ let priorityCircleColor;
 let categoryCircleColor;
 let myTasksToDelete = [];
 
-// let myProjectsIndex;
-
 //
 //
 //
@@ -41,7 +39,7 @@ let myTasksToDelete = [];
 
 const menuElementsList = [
   new MenuElement('add-task', svgIconMenuAdd, false, 'Add Task', {
-    click: [displayForm, createDropdownOptions, dateSelect],
+    click: [createDropdownOptions, displayForm, dateSelect],
   }),
 
   new MenuElement('inbox', svgIconMenuInbox, true, 'Inbox', {

@@ -55,15 +55,16 @@ import { createDropdownOptions } from './create-add-task-form.js';
 //
 // Display
 
-const toggleOverlay = () => {
+const toggleOverlay = (e) => {
+  const id = e.target.id;
   const overlay = document.getElementById('overlay');
 
   if (!overlay.style.display) {
     overlay.style.display = 'none';
   }
-  if (overlay.style.display === 'none') {
+  if (id.includes('task') || id.includes('project')){
     overlay.style.display = 'block';
-  } else {
+  } else if (id.includes('confirm')) {
     overlay.style.display = 'none';
   }
 };
@@ -74,7 +75,7 @@ const toggleConfirm = e => {
   const text = document.getElementById('confirm-label');
 
   if (!popup.style.display) {
-    popup.style.display = 'none';
+    popup.style.display = 'none';k
   }
 
   if (id.includes('task')) {
@@ -111,20 +112,6 @@ const initializeMenuNavStyle = () => {
     next7.style.fontWeight = '700';
   }
 };
-
-// const updateMenuNavStyle = () => {
-//   if (currentPageView.type === 'Menu') {
-//     const inbox = document.getElementById('menu-inbox-label');
-//     const today = document.getElementById('menu-today-label');
-//     const next7 = document.getElementById('menu-next-seven-label');
-//   } else if (currentPageView.type === 'Project') {
-//     const projectMenuLabels = document.querySelectorAll(
-//       '.menu-element-project-label'
-//     );
-//     projectMenuLabels.forEach(label => console.log(label.textContent))
-//     // projectMenuLabels.filter(label => label === projectName)
-//   }
-// };
 
 const toggleDescriptionPopup = e => {
   e.stopPropagation();

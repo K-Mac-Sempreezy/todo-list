@@ -38,6 +38,9 @@ const sortMyTasksByDate = () => {
 };
 
 const inboxTaskSort = () => {
+  if (myTasks.length <= 1 ) {
+    return myTasks;
+  }
   const sortedTasks = myTasks.sort(
     (a, b) =>
       format(new Date(b.date), 'yyyy-MM-dd') -
