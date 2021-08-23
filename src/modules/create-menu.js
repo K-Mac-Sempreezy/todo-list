@@ -1,9 +1,19 @@
-import { createElement, createElementSVG, createElementNS } from './create-element';
+import {
+  createElement,
+  createElementSVG,
+  createElementNS,
+} from './create-element';
 import { inboxTaskSort, todayTaskFilter, next7TaskFilter } from './edit-task';
 import { menuElementsList } from './variables';
-// import { toSpinalCase } from './update-UI';
-import { handleView } from './update-UI';
-
+import {
+  handleView,
+  deleteProject,
+  toggleConfirm, 
+  toggleOverlay,
+  handleDeleteEditIconsOpacity1,
+  handleDeleteEditIconsOpacity0,
+} from './update-UI';
+import { svgEdit, svgTrash, svgDescription } from './svg-variables';
 
 const createMenu = () => {
   const menu = createElement('div', {
@@ -35,11 +45,34 @@ const createMenu = () => {
   menuItems.appendChild(createElementMenu(menuElementsList[2]));
   menuItems.appendChild(createElementMenu(menuElementsList[3]));
   menuItems.appendChild(menuDividerLine2); //adding second divider here
-  menuItems.appendChild(projectContainer); 
+  menuItems.appendChild(createProjectSubHeaderLabel());
+  menuItems.appendChild(projectContainer);
   menuItems.appendChild(createElementMenu(menuElementsList[4]));
   menu.appendChild(menuItems);
 
   return menu;
+};
+
+const createProjectSubHeaderLabel = () => {
+  const container = createElement('div', {
+    class: 'menu-project-subhead-container display-none',
+    id: 'menu-project-subheader',
+  });
+
+  const projectLabel = createElement('div', {
+    class: 'menu-element-label',
+    id: 'menu-subheader-project-label',
+  });
+
+  const countNumber = createElement('p', {
+    class: 'count',
+    id: 'menu-project-subheader-count',
+  });
+
+  projectLabel.textContent = 'Projects';
+  container.appendChild(projectLabel);
+  container.appendChild(countNumber);
+  return container;
 };
 
 const createElementMenu = (menuItem, index) => {
@@ -50,19 +83,19 @@ const createElementMenu = (menuItem, index) => {
     id: `menu-${title}-element-container`,
     'data-key': index,
   });
-  
+
   const icon = createElementSVG('http://www.w3.org/2000/svg', 'svg', {
     class: 'menu-element-icon',
     id: `${title}-icon`,
     'data-key': index,
   });
-  
+
   const label = createElement('p', {
     class: 'menu-element-label',
     id: `menu-${title}-label`,
     'data-key': index,
   });
-  
+
   const countNumber = createElement('p', {
     class: 'count',
     id: `menu-${title}-count`,
@@ -93,10 +126,10 @@ const createElementMenu = (menuItem, index) => {
   return container;
 };
 
-const createElementMenuAddProject = (project, index) => {
+const createElementMenuProject = (project, index) => {
   let {
     name,
-    dueDate,
+    date,
     time,
     description,
     categoryColor,
@@ -106,13 +139,26 @@ const createElementMenuAddProject = (project, index) => {
     priorityCircleFill,
   } = project;
 
-  const container = createElement('div', {
-    class: 'menu-element-container',
-    id: `project-menu-element-container-${index}`,
-    'data-key': index,
+  const container = createElement(
+    'div',
+    {
+      class: 'menu-project-element-container',
+      id: `project-menu-element-container-${index}`,
+      'data-key': index,
+    },
+    {
+      mouseover: handleDeleteEditIconsOpacity1,
+      mouseleave: handleDeleteEditIconsOpacity0,
+      click: handleView,
+    }
+  );
+
+  const identityContainer = createElement('div', {
+    id: `project-identity-container-${index}`,
+    class: 'identity-container',
   });
 
-  const icon = createElementNS('http://www.w3.org/2000/svg', 'circle', {
+  const projectIcon = createElementNS('http://www.w3.org/2000/svg', 'circle', {
     id: `project-icon-${index}`,
     class: 'priority-circle',
     cx: 12,
@@ -125,34 +171,111 @@ const createElementMenuAddProject = (project, index) => {
     'data-key': index,
   });
 
-  const iconContainer = createElementSVG('http://www.w3.org/2000/svg', 'svg', {
+  const projectIconContainer = createElementSVG('http://www.w3.org/2000/svg', 'svg', {
     class: 'task-priority',
     id: `project-icon-container-${index}`,
     'data-key': index,
   });
-  
-  
+
   const label = createElement('p', {
     class: 'menu-element-label',
     id: `project-label-${index}`,
     'data-key': index,
   });
-  
+
   const countNumber = createElement('p', {
     class: 'count',
     id: `project-count-${index}`,
     'data-key': index,
   });
 
-  label.textContent = name;
-  container.addEventListener('click', handleView);
+  const iconsContainer = createElement('div', {
+    id: `menu-project-icons-container-${index}`,
+    class: 'icons-container',
+  })
 
-  container.appendChild(iconContainer);
-  iconContainer.appendChild(icon);
-  container.appendChild(label);
-  container.appendChild(countNumber);
+  const deleteContainer = createElement(
+    'div',
+    {
+      id: `menu-project-delete-container-${index}`,
+      class: 'pointer-events project-icon-container',
+      'data-key': index,
+    },
+    {
+      // click: deleteProject,
+      click: [toggleConfirm, toggleOverlay],
+    }
+  );
+
+  const deleteIcon = createElementSVG(
+    'http://www.w3.org/2000/svg',
+    'svg',
+    {
+      class: 'menu-project-icon trash',
+      id: `project-delete-${index}`,
+      'data-key': index,
+    },
+    {
+    }
+  );
+
+  const editContainer = createElement('div', {
+    id: `menu-project-edit-container-${index}`,
+    class: 'pointer-events project-icon-container',
+    'data-key': index,
+  });
+
+  const editIcon = createElementSVG(
+    'http://www.w3.org/2000/svg',
+    'svg',
+    {
+      class: 'menu-project-icon pencil',
+      id: `project-edit-${index}`,
+      'data-key': index,
+    },
+    {
+      // click: [editTask, displayForm],
+    }
+  );
+
+  const descriptionContainer = createElement('div', {
+    id: `menu-project-description-container-${index}`,
+    class: 'pointer-events project-icon-container',
+    'data-key': index,
+  });
+
+  const descriptionIcon = createElementSVG(
+    'http://www.w3.org/2000/svg',
+    'svg',
+    {
+      class: 'menu-project-icon glasses',
+      id: `project-description-icon-${index}`,
+      'data-key': index,
+    },
+    {
+      // click: [toggleDescriptionPopup, populateDescriptionPopup],
+    }
+  );
+
+  deleteIcon.innerHTML = svgTrash;
+  editIcon.innerHTML = svgEdit;
+  descriptionIcon.innerHTML = svgDescription;
+  label.textContent = name;
+
+  projectIconContainer.appendChild(projectIcon);
+  identityContainer.appendChild(projectIconContainer)
+  identityContainer.appendChild(label)
+  identityContainer.appendChild(countNumber);
+  container.appendChild(identityContainer);
+  descriptionContainer.appendChild(descriptionIcon);
+  editContainer.appendChild(editIcon);
+  deleteContainer.appendChild(deleteIcon);
+  iconsContainer.appendChild(descriptionContainer);
+  iconsContainer.appendChild(editContainer);
+  iconsContainer.appendChild(deleteContainer);
+  container.appendChild(iconsContainer);
 
   return container;
 };
 
-export { createMenu, createElementMenuAddProject };
+export { createMenu, createElementMenuProject, createProjectSubHeaderLabel };

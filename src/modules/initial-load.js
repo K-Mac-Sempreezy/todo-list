@@ -11,8 +11,8 @@ import { createDescriptionPopup } from './create-description-box.js';
 const pageLoad = () => {
   document.body.appendChild(createHeader());
   document.body.appendChild(createMenu());
-  document.body.appendChild(createContent());
   document.body.appendChild(createAddTaskForm());
+  document.body.appendChild(createContent());
   document.body.appendChild(createDescriptionPopup());
   document.body.appendChild(createConfirmContainer());
   document.body.appendChild(createOverlay());

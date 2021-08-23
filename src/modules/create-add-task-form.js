@@ -9,7 +9,7 @@ import {
   handleOptionSelected,
   submitHandler,
   toggleMenuDisplay,
-  clearAddTaskForm,
+  clearForm,
 } from './update-UI.js';
 
 const createAddTaskForm = () => {
@@ -123,6 +123,12 @@ const createAddTaskForm = () => {
     class: 'menu pointer-cursor hide',
   });
 
+
+  const dropdownContainerProject = createElement('div', {
+    id: 'add-task-dropdown-container-project',
+    class: 'dropdown',
+  });
+
   const dropdownTitleContainerProject = createElement(
     'div',
     {
@@ -133,11 +139,6 @@ const createAddTaskForm = () => {
       click: toggleMenuDisplay,
     }
   );
-
-  const dropdownContainerProject = createElement('div', {
-    id: 'add-task-dropdown-container-project',
-    class: 'dropdown',
-  });
 
   const dropdownTitleProject = createElement('div', {
     id: 'dropdown-title-project',
@@ -151,8 +152,9 @@ const createAddTaskForm = () => {
 
   const optionMenuProject = createElement('div', {
     id: 'option-menu-project',
-    class: 'menu pointer-cursor hide',
+    class: 'menu pointer-cursor hide display-none',
   });
+
 
   const buttonContainer = createElement('div', {
     id: 'add-task-form-button-container',
@@ -164,7 +166,7 @@ const createAddTaskForm = () => {
       class: 'button',
     },
     {
-      click: clearAddTaskForm,
+      click: clearForm,
     }
   );
 
@@ -255,6 +257,7 @@ const createDropdownOptions = () => {
   });
 
   myProjects.forEach((project, index) => {
+    console.log(project)
     const op = createElement('div', {
       id: `priority-${index}`,
       class: 'option',

@@ -3,42 +3,51 @@ import {
   next7TaskFilter,
   todayTaskFilter,
   sortMyTasksByDate,
-  projectTaskFilter,
-  sortMyProjectsByDate,
   taskFilterForCurrentPage,
 } from './edit-task.js';
 import {
-  priorityCircleColor,
-  categoryCircleColor,
-  setPriorityCircleColor,
-  setCategoryCircleColor,
-  initialLoadPageLabel,
-  setCurrentPageView,
-  currentPageView,
-  myTasks,
-  // defaultTasks,
-  myTasksIndex,
-  setMyTasksIndex,
-  taskEdit,
-  setIsFirstTime,
-  isFirstTime,
-  setTaskEdit,
-  setLocalStorage,
-  setAddProject,
   addProject,
   addTask,
-  setAddTask,
+  categoryCircleColor,
+  clearMyTasksToDelete,
+  currentPageView,
+  // defaultTasks,
+  initialLoadPageLabel,
+  isFirstTime,
   myProjects,
+  myProjectsIndex,
+  myTasks,
+  myTasksIndex,
+  myTasksToDelete,
+  priorityCircleColor,
+  setAddProject,
+  setAddTask,
+  setCategoryCircleColor,
+  setCurrentPageView,
+  setIsFirstTime,
+  setMyProjectsIndex,
+  setMyTasksIndex,
+  setMyTasksToDelete,
+  setPriorityCircleColor,
+  setLocalStorage,
+  setTaskEdit,
+  taskEdit,
 } from './variables.js';
+import {
+  svgInboxBig,
+  svgNextSevenBig,
+  svgTodayBig,
+  svgProjectIcon,
+} from './svg-variables.js';
+import { projectTaskFilter, sortMyProjectsByDate } from './edit-project.js';
 import { createTaskDateDividerElement, createTask } from './create-task.js';
 import { Task, Project } from './class-templates.js';
 import { format } from 'date-fns';
 import { dateSelect, getPickerValue, setPickerValue } from './date';
-import { svgInboxBig, svgNextSevenBig, svgTodayBig } from './svg-variables.js';
-import { createElementMenuAddProject } from './create-menu.js';
+import { createElementMenuProject } from './create-menu.js';
 
 //
-
+//
 // Display
 
 const toggleOverlay = () => {
@@ -55,18 +64,33 @@ const toggleOverlay = () => {
 };
 
 const toggleConfirm = e => {
+  const id = e.target.id;
   const popup = document.getElementById('confirm-container');
+  const text = document.getElementById('confirm-label');
 
   if (!popup.style.display) {
     popup.style.display = 'none';
   }
 
-  if (popup.style.display === 'none') {
-    popup.style.display = 'flex';
-    setMyTasksIndex(e);
-  } else {
+  if (id.includes('task')) {
+    if (popup.style.display === 'none') {
+      popup.style.display = 'flex';
+      setMyTasksIndex(e);
+      text.textContent = 'Are you sure you want to delete this task?';
+    }    
+  } else if (id.includes('project')) {
+    if (popup.style.display === 'none') {
+      popup.style.display = 'flex';
+      setMyProjectsIndex(e);
+      text.textContent = `This will delete all tasks in project. Press delete to confirm.`;
+    };
+  } else if (id.includes('confirm')) {
     popup.style.display = 'none';
-    setMyTasksIndex();
+    if (!!myProjectsIndex || !!myTasksIndex){
+      return;
+    } else {
+      reset();
+    }
   }
 };
 
@@ -84,6 +108,8 @@ const initializeMenuNavStyle = () => {
 };
 
 const toggleDescriptionPopup = e => {
+  console.log(e);
+  e.stopPropagation();
   const element = document.getElementById(`description-popup`);
   if (!element.style.display) {
     element.style.display = 'none';
@@ -96,24 +122,33 @@ const toggleDescriptionPopup = e => {
   }
 };
 
-const populateDescriptionPopup = e => {
-  // const popup = document.getElementById('description-popup');
-  const date = document.getElementById('description-date');
-  const time = document.getElementById('description-time');
-  const task = document.getElementById('description-task');
-  const descripton = document.getElementById('description-description');
-  const priority = document.getElementById('description-priority-content');
-  const category = document.getElementById('description-category-content');
-  setMyTasksIndex(e);
-  const element = myTasks[myTasksIndex];
-  console.log(element);
+const toggleDisplay = elem => {
+  const curDisplayStyle = elem.style.display;
 
-  date.textContent = format(new Date(element.date), 'MMM do, yyyy');
-  time.textContent = element.time;
-  task.textContent = element.label;
-  descripton.textContent = element.description;
-  priority.textContent = element.priorityLabel;
-  category.textContent = element.categoryLabel;
+  if (curDisplayStyle === 'none' || curDisplayStyle === '') {
+    elem.style.display = 'block';
+  } else {
+    elem.style.display = '';
+  }
+};
+
+const toggleMenuDisplay = e => {
+  let menu;
+  let icon;
+  if (e.target.id === 'add-task-dropdown-title-container-category') {
+    menu = document.getElementById('option-menu-category');
+    icon = document.getElementById('dropdown-icon-category');
+  } else if (e.target.id === 'add-task-dropdown-title-container-priority') {
+    menu = document.getElementById('option-menu-priority');
+    icon = document.getElementById('dropdown-icon-priority');
+  } else if (e.target.id === 'add-task-dropdown-title-container-project') {
+    menu = document.getElementById('option-menu-project');
+    icon = document.getElementById('dropdown-icon-project');
+  }
+
+  toggleDisplay(menu);
+  toggleClass(menu, 'hide');
+  toggleClass(icon, 'rotate-90');
 };
 
 const fillPriorityCircle = e => {
@@ -140,23 +175,21 @@ const fillPriorityCircle = e => {
   setLocalStorage('myTasks', myTasks);
 };
 
-const toggleDisplay = elem => {
-  const curDisplayStyle = elem.style.display;
-
-  if (curDisplayStyle === 'none' || curDisplayStyle === '') {
-    elem.style.display = 'block';
-  } else {
-    elem.style.display = '';
-  }
-};
-
 const displayForm = e => {
+  const id = e.target.id;
+  console.log(id);
+  const key = findElementDataKey(e);
+  const overlay = document.getElementById('overlay');
   const container = document.getElementById('add-task-form-container');
   const formLabel = document.getElementById('add-task-form-type-label');
   const input = document.getElementById('add-task-input');
+  const projectOptions = document.getElementById(
+    'add-task-dropdown-container-project'
+  );
+  const classList = projectOptions.getAttribute('class');
+
   container.style.display = 'flex';
-  const id = e.target.id;
-  const key = findElementDataKey(e);
+  overlay.style.display = 'flex';
   if (id === 'menu-add-task-element-container') {
     formLabel.textContent = 'Add Task';
     input.placeholder = 'Add task name';
@@ -165,58 +198,113 @@ const displayForm = e => {
     formLabel.textContent = 'Add Project';
     input.placeholder = 'Add project name';
     setAddProject(true);
+    if (classList.includes('display-none')) {
+      return;
+    }
+    toggleClass(projectOptions, 'display-none');
   } else if (id === `task-edit-${key}`) {
     formLabel.textContent = 'Edit Task';
     input.placeholder = 'Edit task name';
     setTaskEdit(true);
+    if (classList.includes('display-none')) {
+      toggleClass(projectOptions, 'display-none');
+    }
+  } //edit Project goes here soon
+};
+
+const handleContentHeaderLabel = contentLabel => {
+  const label = document.getElementById('content-header-label');
+  label.textContent = contentLabel;
+};
+
+const handleContentHeaderIcon = svg => {
+  const icon = document.getElementById('content-header-label-icon');
+  icon.innerHTML = svg;
+};
+
+const handleView = e => {
+  e.stopPropagation();
+  const key = findElementDataKey(e);
+  const inboxLabel = document.getElementById('menu-inbox-label');
+  const todayLabel = document.getElementById('menu-today-label');
+  const next7Label = document.getElementById('menu-next-seven-label');
+  const projectLabel = document.getElementById(`project-label-${key}`);
+  const children = document.querySelectorAll('.menu-element-label');
+
+  for (let item of children) {
+    item.style.fontWeight = '300';
+  }
+
+  sortMyTasksByDate();
+  setLocalStorage('myTasks', myTasks);
+  setLocalStorage('myProjects', myProjects);
+  clearTaskWrapper();
+
+  if (e.target.id === 'menu-today-element-container') {
+    inboxLabel.style.fontWeight = '300';
+    todayLabel.style.fontWeight = '700';
+    next7Label.style.fontWeight = '300';
+    setCurrentPageView('Today', 'Menu');
+    handleContentHeaderLabel('Today');
+    populateTaskWrapper(todayTaskFilter());
+    handleContentHeaderIcon(svgTodayBig);
+  } else if (e.target.id === 'menu-inbox-element-container') {
+    inboxLabel.style.fontWeight = '700';
+    todayLabel.style.fontWeight = '300';
+    next7Label.style.fontWeight = '300';
+    setCurrentPageView('Inbox', 'Menu');
+    handleContentHeaderLabel('Inbox');
+    populateTaskWrapper(inboxTaskSort());
+    handleContentHeaderIcon(svgInboxBig);
+  } else if (e.target.id === 'menu-next-seven-element-container') {
+    inboxLabel.style.fontWeight = '300';
+    todayLabel.style.fontWeight = '300';
+    next7Label.style.fontWeight = '700';
+    setCurrentPageView('Next 7 Days', 'Menu');
+    handleContentHeaderLabel('Next 7 Days');
+    populateTaskWrapper(next7TaskFilter());
+    handleContentHeaderIcon(svgNextSevenBig);
+  } else if (e.target.id === `project-menu-element-container-${key}`) {
+    inboxLabel.style.fontWeight = '300';
+    todayLabel.style.fontWeight = '300';
+    next7Label.style.fontWeight = '300';
+    projectLabel.style.fontWeight = '700';
+    setCurrentPageView(projectLabel.textContent, 'Project');
+    handleContentHeaderLabel(projectLabel.textContent);
+    populateTaskWrapper(projectTaskFilter(projectLabel.textContent));
+    handleContentHeaderIcon(svgProjectIcon);
   }
 };
 
 const handleDeleteEditIconsOpacity1 = e => {
-  e.stopPropagation;
-  document.getElementById(
-    `task-delete-${findElementDataKey(e)}`
-  ).style.opacity = 1;
-  document.getElementById(
-    `task-edit-${findElementDataKey(e)}`
-  ).style.opacity = 1;
-  document.getElementById(
-    `task-description-icon-${findElementDataKey(e)}`
-  ).style.opacity = 1;
+  const id = e.target.parentNode.id;
+  const key = findElementDataKey(e);
+  if (id.includes('task')) {
+    document.getElementById(`task-delete-${key}`).style.opacity = 1;
+    document.getElementById(`task-edit-${key}`).style.opacity = 1;
+    document.getElementById(`task-description-icon-${key}`).style.opacity = 1;
+  } else if (id.includes('project')) {
+    document.getElementById(
+      `menu-project-icons-container-${key}`
+    ).style.opacity = 1;
+  }
 };
 
 const handleDeleteEditIconsOpacity0 = e => {
-  document.getElementById(
-    `task-delete-${findElementDataKey(e)}`
-  ).style.opacity = 0;
-  document.getElementById(
-    `task-edit-${findElementDataKey(e)}`
-  ).style.opacity = 0;
-  document.getElementById(
-    `task-description-icon-${findElementDataKey(e)}`
-  ).style.opacity = 0;
-};
-
-const toggleMenuDisplay = e => {
-  let menu;
-  let icon;
-  if (e.target.id === 'add-task-dropdown-title-container-category') {
-    menu = document.getElementById('option-menu-category');
-    icon = document.getElementById('dropdown-icon-category');
-  } else if (e.target.id === 'add-task-dropdown-title-container-priority') {
-    menu = document.getElementById('option-menu-priority');
-    icon = document.getElementById('dropdown-icon-priority');
-  } else if (e.target.id === 'add-task-dropdown-title-container-project') {
-    menu = document.getElementById('option-menu-project');
-    icon = document.getElementById('dropdown-icon-project');
+  const id = e.target.parentNode.id;
+  const key = findElementDataKey(e);
+  if (id.includes('task')) {
+    document.getElementById(`task-delete-${key}`).style.opacity = 0;
+    document.getElementById(`task-edit-${key}`).style.opacity = 0;
+    document.getElementById(`task-description-icon-${key}`).style.opacity = 0;
+  } else if (id.includes('menu')) {
+    document.getElementById(
+      `menu-project-icons-container-${key}`
+    ).style.opacity = 0;
   }
-
-  toggleDisplay(menu);
-  toggleClass(menu, 'hide');
-  toggleClass(icon, 'rotate-90');
 };
 
-const populateAddTaskForm = () => {
+const populateForm = () => {
   const taskToEdit = myTasks[myTasksIndex];
   let {
     date,
@@ -251,7 +339,6 @@ const populateAddTaskForm = () => {
 };
 
 const populateTaskWrapper = sortedTasks => {
-  
   clearTaskWrapper();
   if (sortedTasks.length === 0) {
     return;
@@ -282,72 +369,28 @@ const populateTaskWrapper = sortedTasks => {
   });
 };
 
-const handleContentHeaderLabel = contentLabel => {
-  const label = document.getElementById('content-header-label');
-  label.textContent = contentLabel;
-};
+const populateDescriptionPopup = e => {
+  // const popup = document.getElementById('description-popup');
+  const date = document.getElementById('description-date');
+  const time = document.getElementById('description-time');
+  const task = document.getElementById('description-task');
+  const descripton = document.getElementById('description-description');
+  const priority = document.getElementById('description-priority-content');
+  const category = document.getElementById('description-category-content');
+  setMyTasksIndex(e);
+  const element = myTasks[myTasksIndex];
+  console.log(element);
 
-const handleContentHeaderIcon = svg => {
-  const icon = document.getElementById('content-header-label-icon');
-  icon.innerHTML = svg;
-};
-
-const handleView = e => {
-  const key = findElementDataKey(e);
-  const inboxLabel = document.getElementById('menu-inbox-label');
-  const todayLabel = document.getElementById('menu-today-label');
-  const next7Label = document.getElementById('menu-next-seven-label');
-  const projectLabel = document.getElementById(`project-label-${key}`);
-  const children = document.querySelectorAll('.menu-element-label');
-  
-  for (let item of children) {
-    console.log(typeof item);
-    item.style.fontWeight = '300';
-  }
-
-  sortMyTasksByDate();
-  setLocalStorage('myTasks', myTasks);
-  setLocalStorage('myProjects', myProjects);
-  clearTaskWrapper();
-  
-  if (e.target.id === 'menu-today-element-container') {
-    inboxLabel.style.fontWeight = '300';
-    todayLabel.style.fontWeight = '700';
-    next7Label.style.fontWeight = '300';
-    setCurrentPageView('Today');
-    handleContentHeaderLabel('Today');
-    populateTaskWrapper(todayTaskFilter());
-    handleContentHeaderIcon(svgTodayBig);
-  } else if (e.target.id === 'menu-inbox-element-container') {
-    inboxLabel.style.fontWeight = '700';
-    todayLabel.style.fontWeight = '300';
-    next7Label.style.fontWeight = '300';
-    setCurrentPageView('Inbox');
-    handleContentHeaderLabel('Inbox');
-    populateTaskWrapper(inboxTaskSort());
-    handleContentHeaderIcon(svgInboxBig);
-  } else if (e.target.id === 'menu-next-seven-element-container') {
-    inboxLabel.style.fontWeight = '300';
-    todayLabel.style.fontWeight = '300';
-    next7Label.style.fontWeight = '700';
-    setCurrentPageView('Next 7 Days');
-    handleContentHeaderLabel('Next 7 Days');
-    populateTaskWrapper(next7TaskFilter());
-    handleContentHeaderIcon(svgNextSevenBig);
-  } else if (e.target.id === `project-menu-element-container-${key}`){
-    inboxLabel.style.fontWeight = '300';
-    todayLabel.style.fontWeight = '300';
-    next7Label.style.fontWeight = '300';
-    projectLabel.style.fontWeight = '700';
-    // setCurrentPageView('Next 7 Days');
-    // handleContentHeaderLabel('Next 7 Days');
-    populateTaskWrapper(projectTaskFilter(projectLabel.textContent));
-    // handleContentHeaderIcon(svgNextSevenBig);
-  }
+  date.textContent = format(new Date(element.date), 'MMM do, yyyy');
+  time.textContent = element.time;
+  task.textContent = element.label;
+  descripton.textContent = element.description;
+  priority.textContent = element.priorityLabel;
+  category.textContent = element.categoryLabel;
 };
 
 //
-
+//
 // Update
 
 const editTaskToEdit = () => {
@@ -364,7 +407,10 @@ const editTaskToEdit = () => {
   const priorityLabel = document.getElementById(
     'dropdown-title-priority'
   ).textContent;
-  const projectLabel = document.getElementById('dropdown-title-project').textContent;
+  const projectLabel = document.getElementById(
+    'dropdown-title-project'
+  ).textContent;
+  document.getElementById('');
 
   if (!date || !taskToEdit) {
     return;
@@ -409,7 +455,6 @@ const makeNewTaskItem = () => {
   const projectLabel = document.getElementById(
     'dropdown-title-project'
   ).textContent;
-  
 
   const taskObject = new Task(
     date,
@@ -463,57 +508,72 @@ const makeNewProjectItem = () => {
   myProjects.push(project);
   sortMyProjectsByDate(); //sorts and formats to ISO
   setLocalStorage('myProjects', myProjects);
+  toggleClass(
+    document.getElementById('add-task-dropdown-container-project'),
+    'display-none'
+  );
   reset();
 };
 
 const reset = () => {
-  updateTaskContent();
-  updateMenuCount();
-  updateProjectMenu();
-  clearAddTaskForm();
-  setMyTasksIndex();
-  setTaskEdit(false);
+  clearForm();
+  clearMyTasksToDelete();
   setAddProject(false);
   setAddTask(false);
-  setPriorityCircleColor('');
   setCategoryCircleColor('');
+  setMyProjectsIndex();
+  setMyTasksIndex();
+  setPriorityCircleColor('');
+  setTaskEdit(false);
+  updateMenuCount();
+  updateProjectMenu();
+  updateTaskContent();
 };
 
 const updateTaskContent = () => {
-  if (currentPageView === 'Inbox') {
-    populateTaskWrapper(inboxTaskSort());
-  } else if (currentPageView === 'Today') {
-    populateTaskWrapper(todayTaskFilter());
-  } else if (currentPageView === 'Next 7 Days') {
-    populateTaskWrapper(next7TaskFilter());
+  if (currentPageView.type === 'Menu') {
+    if (currentPageView.pageLabel === 'Inbox') {
+      populateTaskWrapper(inboxTaskSort());
+    } else if (currentPageView.pageLabel === 'Today') {
+      populateTaskWrapper(todayTaskFilter());
+    } else if (currentPageView.pageLabel === 'Next 7 Days') {
+      populateTaskWrapper(next7TaskFilter());
+    }
+  } else if (currentPageView.type === 'Project') {
+    populateTaskWrapper(projectTaskFilter(currentPageView.pageLabel));
   }
 };
 
 const updateMenuCount = () => {
   document.getElementById('menu-inbox-count').textContent =
-  inboxTaskSort().length;
+    inboxTaskSort().length;
   document.getElementById('menu-today-count').textContent =
-  todayTaskFilter().length;
+    todayTaskFilter().length;
   document.getElementById('menu-next-seven-count').textContent =
-  next7TaskFilter().length;
+    next7TaskFilter().length;
 };
 
 const updateProjectMenu = () => {
   const menu = document.getElementById('menu-project-container');
+  const subheader = document.getElementById('menu-project-subheader');
   if (menu.firstElementChild) {
     while (menu.firstElementChild) {
       menu.firstElementChild.remove();
     }
   }
-  
+
   setLocalStorage('myProjects', myProjects);
   myProjects.forEach((project, index) => {
-    menu.appendChild(createElementMenuAddProject(project, index));
+    menu.appendChild(createElementMenuProject(project, index));
   });
+
+  if (document.getElementById('menu-project-container').firstElementChild) {
+    toggleClass(subheader, 'display-none');
+  }
 };
 
 //
-
+//
 // Remove
 
 const clearTaskWrapper = () => {
@@ -525,38 +585,78 @@ const clearTaskWrapper = () => {
   }
 };
 
-const clearAddTaskForm = () => {
+const clearForm = () => {
   document.getElementById('add-task-input').value = '';
   document.getElementById('task-date').value = '';
   document.getElementById('add-task-description-input').value = '';
   document.getElementById('dropdown-title-category').textContent = 'Category';
   document.getElementById('dropdown-title-priority').textContent = 'Priority';
-  document.getElementById('dropdown-title-priority').textContent = 'Project';
+  document.getElementById('dropdown-title-project').textContent = 'Project';
   document.getElementById('add-task-form-container').style.display = 'none';
+  document.getElementById('overlay').style.display = 'none';
+  toggleClass(
+    document.getElementById('add-task-dropdown-container-project'),
+    'display-none'
+  );
   setPickerValue(null);
+};
+
+const deleteHandler = () => {
+  if (myProjectsIndex && !myTasksIndex) {
+    deleteProject();
+  } else if (!myProjectsIndex && myTasksIndex) {
+    deleteTask();
+  }
+};
+
+const deleteProject = () => {
+  const projectName = document.getElementById(
+    `project-label-${myProjectsIndex}`
+  ).textContent;
+  const projectsIndex = myProjects[myProjectsIndex];
+
+  myTasks.forEach(task => {
+    if (task.project === projectName) {
+      setMyTasksToDelete(myTasks.indexOf(task));
+    } else {
+      return;
+    }
+  });
+
+  for (let i = myTasksToDelete.length - 1; i >= 0; i--) {
+    myTasks.splice(myTasksToDelete[i], 1);
+  }
+
+  myProjects.splice(projectsIndex, 1);
+
+  reset();
 };
 
 const deleteTask = () => {
   myTasks.splice(myTasks[myTasksIndex], 1);
-  updateTaskContent();
-  updateMenuCount();
-  // updateProjectMenuCount(); //keep for future addition to program
-  setMyTasksIndex();
+  reset();
 };
 
-//
 
+
+//
+//
 //Utility
+
+const consoleLogE = e => {
+  console.log(e.target.id);
+};
 
 const initializeContent = () => {
   populateTaskWrapper(inboxTaskSort());
   initializeMenuNavStyle();
   updateMenuCount();
+  dateSelect();
   updateProjectMenu();
   setLocalStorage('myTasks', myTasks);
   setLocalStorage('myProjects', myProjects);
   setLocalStorage('isFirstTime', isFirstTime);
-  setCurrentPageView(initialLoadPageLabel);
+  setCurrentPageView(initialLoadPageLabel, 'Menu');
 
   if (isFirstTime.length <= 0) {
     setIsFirstTime(false);
@@ -589,6 +689,9 @@ const colorChange = string => {
 };
 
 const submitHandler = () => {
+  const overlay = document.getElementById('overlay');
+  overlay.style.display = 'none';
+
   if (!taskEdit && !addProject & addTask) {
     makeNewTaskItem();
     console.log('addTask');
@@ -643,36 +746,39 @@ const handleOptionSelected = e => {
 };
 
 export {
-  initializeMenuNavStyle,
-  toggleDescriptionPopup,
-  handleContentHeaderLabel,
-  handleContentHeaderIcon,
-  updateTaskContent,
-  updateProjectMenu,
-  makeNewTaskItem,
-  makeNewProjectItem,
+  capitalizeFirstLetter,
+  clearTaskWrapper,
+  clearForm,
+  consoleLogE,
+  deleteHandler,
+  deleteTask,
+  deleteProject,
+  displayForm,
   editTaskToEdit,
   fillPriorityCircle,
-  updateMenuCount,
-  clearTaskWrapper,
-  toggleConfirm,
-  toggleOverlay,
-  deleteTask,
   findElementDataKey,
-  populateAddTaskForm,
-  populateDescriptionPopup,
+  handleContentHeaderLabel,
+  handleContentHeaderIcon,
   handleDeleteEditIconsOpacity1,
   handleDeleteEditIconsOpacity0,
-  clearAddTaskForm,
-  capitalizeFirstLetter,
-  displayForm,
   handleOptionSelected,
+  handleView,
   initializeContent,
+  initializeMenuNavStyle,
+  makeNewTaskItem,
+  makeNewProjectItem,
+  populateForm,
+  populateDescriptionPopup,
+  populateTaskWrapper,
   submitHandler,
+  toggleDescriptionPopup,
+  toggleConfirm,
+  toggleOverlay,
   toggleDisplay,
   toSpinalCase,
   toggleMenuDisplay,
   toggleClass,
-  handleView,
-  populateTaskWrapper,
+  updateTaskContent,
+  updateProjectMenu,
+  updateMenuCount,
 };

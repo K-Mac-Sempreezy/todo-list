@@ -15,7 +15,9 @@ import {
 let myTasks = JSON.parse(localStorage.getItem('myTasks') || '[]');
 let myProjects = JSON.parse(localStorage.getItem('myProjects') || '[]');
 let isFirstTime = JSON.parse(localStorage.getItem('isFirstTime') || '[]');
-let currentPageView = '';
+
+let currentPageView = { pageLabel: '', type: '' };
+
 let initialLoadPageLabel = 'Inbox';
 let initialLoadPageIcon = svgInboxBig;
 let remove = true;
@@ -23,8 +25,11 @@ let taskEdit = false;
 let addProject = false;
 let addTask = false;
 let myTasksIndex;
+let myProjectsIndex;
 let priorityCircleColor;
 let categoryCircleColor;
+let myTasksToDelete = [];
+// let myProjectsIndex;
 //
 //
 //
@@ -116,13 +121,36 @@ const setLocalStorage = (string, object) => {
   localStorage.setItem(string, JSON.stringify(object));
 };
 
-const setCurrentPageView = string => {
-  currentPageView = string.trim();
+const clearMyTasksToDelete = e => {
+  myTasksToDelete = [];
+};
+
+const setMyTasksToDelete = (number) => {
+  myTasksToDelete.push(number);
+  console.log(myTasksToDelete)
+}; 
+
+const setCurrentPageView = (pageName, pageType) => {
+  //pageName = '' && pageType = 'Menu' or 'Project';
+  currentPageView.pageLabel = pageName.trim();
+  currentPageView.type = pageType;
 };
 
 const setTaskEdit = value => {
   taskEdit = value;
 };
+
+const setMyProjectsIndex = (e) => {
+  if (!e) {
+    myProjectsIndex = null;
+    setLocalStorage('myProjects', myProjects);
+    return;
+  }
+  setLocalStorage('myProjects', myProjects);
+  const key = findElementDataKey(e);
+  myProjectsIndex = key;
+  console.log(myProjectsIndex)
+}
 
 const setMyTasksIndex = e => {
   if (!e) {
@@ -154,23 +182,26 @@ export {
   isFirstTime,
   addTask,
   myTasksIndex,
+  myProjectsIndex,
   currentPageView,
   initialLoadPageLabel,
   initialLoadPageIcon,
   priorityCircleColor,
   categoryCircleColor,
+  myTasksToDelete,
   menuElementsList,
   colorLists,
-  // categoryColorList,
-  // priorityColorList,
   defaultTasks,
   setIsFirstTime,
   setAddTask,
   setAddProject,
+  clearMyTasksToDelete,
   setLocalStorage,
   setPriorityCircleColor,
   setCategoryCircleColor,
   setTaskEdit,
   setMyTasksIndex,
+  setMyTasksToDelete,
+  setMyProjectsIndex,
   setCurrentPageView,
 };

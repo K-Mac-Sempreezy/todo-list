@@ -1,10 +1,11 @@
 import { createElement } from './create-element.js';
-import { deleteTask, toggleOverlay, toggleConfirm } from './update-UI.js';
+import { deleteHandler, toggleOverlay, toggleConfirm } from './update-UI.js';
 
 const createConfirmContainer = () => {
   const confirmContainer = createElement('div', {
     id: 'confirm-container',
     class: '',
+    draggable: true,
   });
 
   const confirmLabel = createElement('div', {
@@ -12,7 +13,7 @@ const createConfirmContainer = () => {
     class: '',
   });
 
-  const confirmButtonContainer = createElement('div', {
+  const buttonContainer = createElement('div', {
     id: 'confirm-button-container',
     class: 'container',
   }); 
@@ -37,7 +38,7 @@ const createConfirmContainer = () => {
       label: 'Delete',
     },
     {
-      click: [deleteTask, toggleOverlay, toggleConfirm],
+      click: [deleteHandler, toggleOverlay, toggleConfirm],
     }
   );
 
@@ -45,9 +46,9 @@ const createConfirmContainer = () => {
   confirmDeleteButton.textContent = 'Delete';
   confirmCancelButton.textContent = 'Cancel';
   confirmContainer.appendChild(confirmLabel);
-  confirmContainer.appendChild(confirmButtonContainer);
-  confirmButtonContainer.appendChild(confirmCancelButton);
-  confirmButtonContainer.appendChild(confirmDeleteButton);
+  confirmContainer.appendChild(buttonContainer);
+  buttonContainer.appendChild(confirmCancelButton);
+  buttonContainer.appendChild(confirmDeleteButton);
 
   return confirmContainer;
 };

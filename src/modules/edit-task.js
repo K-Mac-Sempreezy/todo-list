@@ -1,27 +1,32 @@
 import { myTasks, setLocalStorage } from './variables.js';
 import { format, formatISO, addDays, isWithinInterval } from 'date-fns';
-import { populateAddTaskForm } from './update-UI.js';
-import { currentPageView, setMyTasksIndex, setTaskEdit, myProjects } from './variables.js';
+import { populateForm } from './update-UI.js';
+import { currentPageView, setMyTasksIndex, setTaskEdit } from './variables.js';
 import { createDropdownOptions } from './create-add-task-form.js';
+import { projectTaskFilter } from './edit-project.js';
 
 const editTask = e => {
   createDropdownOptions();
   setMyTasksIndex(e);
   setTaskEdit(true);
-  populateAddTaskForm();
+  populateForm();
 };
 
 const taskFilterForCurrentPage = () => {
   let tasks;
-  if (currentPageView === 'Inbox') {
-    tasks = inboxTaskSort();
-  } else if (currentPageView === 'Today') {
-    tasks = todayTaskFilter();
-  } else if (currentPageView === 'Next 7 Days') {
-    tasks = next7TaskFilter();
+  if (currentPageView.type === 'Menu') {
+    if (currentPageView.pageLabel === 'Inbox') {
+      tasks = inboxTaskSort();
+    } else if (currentPageView.pageLabel === 'Today') {
+      tasks = todayTaskFilter();
+    } else if (currentPageView.pageLabel === 'Next 7 Days') {
+      tasks = next7TaskFilter();
+    }
+  } else if (currentPageView.type === 'Project') {
+    tasks = projectTaskFilter(currentPageView.pageLabel);
   }
   return tasks;
-}
+};
 
 const sortMyTasksByDate = () => {
   setLocalStorage('myTasks', myTasks);
@@ -30,17 +35,6 @@ const sortMyTasksByDate = () => {
       .sort((a, b) => new Date(a.date) - new Date(b.date))
       .forEach(task => (task.date = formatISO(new Date(task.date))));
     setLocalStorage('myTasks', myTasks);
-  } else {
-    return;
-  }
-};
-
-const sortMyProjectsByDate = () => {
-  if (myProjects.length > 1) {
-    myProjects
-    .sort((a, b) => new Date(a.date) - new Date(b.date))
-    .forEach(project => (project.date = formatISO(new Date(project.date))));
-    setLocalStorage('myProjects', myProjects);
   } else {
     return;
   }
@@ -81,18 +75,11 @@ const next7TaskFilter = () => {
   return next7Days;
 };
 
-const projectTaskFilter = (projectName) => {
-  return myTasks.filter(task => task.project === projectName)
-}
-
-
 export {
   editTask,
   inboxTaskSort,
   todayTaskFilter,
   next7TaskFilter,
   sortMyTasksByDate,
-  projectTaskFilter,
-  sortMyProjectsByDate,
   taskFilterForCurrentPage
 };

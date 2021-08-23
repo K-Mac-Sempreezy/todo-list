@@ -6,6 +6,7 @@ import {
   toggleOverlay,
   toggleDescriptionPopup,
   populateDescriptionPopup,
+  fillPriorityCircle,
 } from './update-UI.js';
 import {
   createElement,
@@ -14,9 +15,7 @@ import {
 } from './create-element.js';
 import { editTask } from './edit-task.js';
 import { format } from 'date-fns';
-import { fillPriorityCircle } from './update-UI.js';
 
-//create element functions
 
 const createTaskDateDividerElement = date => {
   const formattedDate = format(new Date(date), 'MM-dd-yyyy');
@@ -134,7 +133,7 @@ const createTask = (task, index) => {
   });
 
   const taskStatusIcon = createElementSVG('http://www.w3.org/2000/svg', 'svg', {
-    class: 'task-icon status',
+    class: 'icon status',
     id: `task-status-${index}`,
     'data-key': index,
   });
@@ -154,13 +153,13 @@ const createTask = (task, index) => {
   );
 
   const taskPersonIcon = createElement('div', {
-    class: 'task-icon person',
+    class: 'icon person',
     id: `task-person-${index}`,
     'data-key': index,
   });
 
   const taskAvatarIcon = createElement('div', {
-    class: 'task-icon avatar',
+    class: 'icon avatar',
     id: `task-avatar-${index}`,
     'data-key': index,
   });
@@ -168,7 +167,7 @@ const createTask = (task, index) => {
   const taskDeleteIcon = createElement(
     'div',
     {
-      class: 'task-icon delete',
+      class: 'icon delete',
       id: `task-delete-${index}`,
       'data-key': index,
     },
@@ -180,7 +179,7 @@ const createTask = (task, index) => {
   const taskEditIcon = createElement(
     'div',
     {
-      class: 'task-icon edit',
+      class: 'icon edit',
       id: `task-edit-${index}`,
       'data-key': index,
     },
@@ -192,7 +191,7 @@ const createTask = (task, index) => {
   const taskDescriptionIcon = createElement(
     'div',
     {
-      class: 'task-icon description',
+      class: 'icon description',
       id: `task-description-icon-${index}`,
       'data-key': index,
     },

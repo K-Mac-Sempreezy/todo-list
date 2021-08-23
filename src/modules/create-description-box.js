@@ -16,7 +16,7 @@ const createDescriptionPopup = () => {
 
   const dateTimeContainer = createElement('div', {
     id: 'description-date-time-container',
-    class: 'labels-container',
+    class: 'date-time-container',
   });
 
   const dateContainer = createElement('div', {
@@ -31,7 +31,7 @@ const createDescriptionPopup = () => {
   
   const date = createElement('div', {
     id: 'description-date',
-    class: '',
+    class: 'indent',
   });
   
   const timeContainer = createElement('div', {
@@ -46,7 +46,7 @@ const createDescriptionPopup = () => {
 
   const time = createElement('div', {
     id: 'description-time',
-    class: '',
+    class: ' indent',
   });
 
   const taskContainer = createElement('div', {
@@ -56,12 +56,12 @@ const createDescriptionPopup = () => {
 
   const taskLabel = createElement('div', {
     id: 'description-task-label',
-    class: 'content-label space margin',
+    class: 'content-label space labels',
   });
 
   const task = createElement('div', {
     id: 'description-task',
-    class: 'task',
+    class: 'task indent',
   });
 
   const descriptionContainer = createElement('div', {
@@ -71,12 +71,12 @@ const createDescriptionPopup = () => {
 
   const descriptionLabel = createElement('div', {
     id: 'description-description-label',
-    class: 'content-label margin',
+    class: 'content-label labels',
   });
 
   const description = createElement('div', {
     id: 'description-description',
-    class: 'task-description',
+    class: 'task indent',
   });
 
   const labelsContainer = createElement('div', {
@@ -96,7 +96,7 @@ const createDescriptionPopup = () => {
 
   const priority = createElement('div', {
     id: 'description-priority-content',
-    class: '',
+    class: 'indent',
   });
   
   const projectContainer = createElement('div', {
@@ -111,7 +111,7 @@ const createDescriptionPopup = () => {
 
   const project = createElement('div', {
     id: 'description-project-content',
-    class: '',
+    class: 'indent',
   });
 
   const categoryContainer = createElement('div', {
@@ -126,7 +126,7 @@ const createDescriptionPopup = () => {
 
   const category = createElement('div', {
     id: 'description-category-content',
-    class: '',
+    class: 'indent',
   });
 
   const button = createElement(
