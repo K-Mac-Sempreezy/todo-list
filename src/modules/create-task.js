@@ -7,7 +7,7 @@ import {
   toggleDescriptionPopup,
   populateDescriptionPopup,
   fillPriorityCircle,
-  toggleHelperBox,
+  // toggleHelperBox,
 } from './update-UI.js';
 import {
   createElement,

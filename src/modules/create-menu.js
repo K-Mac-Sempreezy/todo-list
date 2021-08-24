@@ -9,7 +9,6 @@ import { currentPageView, menuElementsList } from './variables';
 import {
   handleView,
   displayForm,
-  // deleteProject,
   toggleConfirm, 
   toggleOverlay,
   handleDeleteEditIconsOpacity1,

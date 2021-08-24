@@ -4,7 +4,9 @@ require('flatpickr/dist/themes/confetti.css');
 let picker;
 
 const dateSelect = () => {
-  if (picker) {return};
+  if (picker) {
+    return;
+  }
   picker = flatpickr('#task-date', {
     clickOpens: true,
     minDate: 'today',
@@ -18,10 +20,10 @@ const dateSelect = () => {
 
 const getPickerValue = () => {
   return picker.input.value;
-}
+};
 
-const setPickerValue = (date) => {
-  picker.setDate(date)
-}
+const setPickerValue = date => {
+  picker.setDate(date);
+};
 
 export { picker, setPickerValue, getPickerValue, dateSelect };

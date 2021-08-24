@@ -226,33 +226,22 @@ const createAddTaskForm = () => {
 };
 
 const createDropdownOptions = () => {
-
   const categoryMenu = document.getElementById('option-menu-category');
   const priorityMenu = document.getElementById('option-menu-priority');
   const projectMenu = document.getElementById('option-menu-project');
-
+  const menuNames = [categoryMenu, priorityMenu, projectMenu];
+  
   if (projectMenu.getAttribute('class').includes('display-none')) {
     toggleClass(projectMenu, 'display-none');
   }
-
-  if (categoryMenu.firstElementChild) {
-    while (categoryMenu.firstElementChild){
-      categoryMenu.firstElementChild.remove();
-    }
-  }
-
-  if (priorityMenu.firstElementChild) {
-    while (priorityMenu.firstElementChild){
-      priorityMenu.firstElementChild.remove();
-    }
-  }
   
-  if (projectMenu.firstElementChild) {
-    while (projectMenu.firstElementChild){
-      projectMenu.firstElementChild.remove();
+  menuNames.forEach(item => {
+    if (item.firstElementChild) {
+      while (item.firstElementChild) {
+        item.firstElementChild.remove();
+      }
     }
-  }
-
+  });
 
   Object.entries(colorLists).forEach(([k, v]) => {
     Object.entries(v).forEach(([key, value], index) => {

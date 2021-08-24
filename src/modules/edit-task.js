@@ -37,7 +37,7 @@ const sortMyTasksByDate = () => {
 };
 
 const inboxTaskSort = () => {
-  if (myTasks.length <= 1 ) {
+  if (myTasks.length <= 1) {
     return myTasks;
   }
   const sortedTasks = myTasks.sort(
@@ -80,5 +80,5 @@ export {
   todayTaskFilter,
   next7TaskFilter,
   sortMyTasksByDate,
-  taskFilterForCurrentPage
+  taskFilterForCurrentPage,
 };

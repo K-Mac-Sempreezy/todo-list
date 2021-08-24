@@ -148,7 +148,7 @@ const createDescriptionPopup = () => {
   categoryLabel.textContent = 'category:';
   category.textContent = 'level';
   projectLabel.textContent = 'project:';
-  project.textContent = 'level';
+  project.textContent = '';
   taskLabel.textContent = 'task:';
   task.textContent = 'Task name here';
   descriptionLabel.textContent = 'description:';

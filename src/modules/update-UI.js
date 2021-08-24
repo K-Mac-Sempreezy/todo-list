@@ -11,7 +11,6 @@ import {
   categoryCircleColor,
   clearMyTasksToDelete,
   currentPageView,
-  // defaultTasks,
   projectEdit,
   initialLoadPageLabel,
   isFirstTime,
@@ -828,6 +827,7 @@ const submitHandler = () => {
     makeNewTaskItem();
     console.log('addTask');
   } else if (!taskEdit && addProject && !projectEdit && !addTask) {
+    console.log('project new')
     makeNewProjectItem();
     console.log('addProject');
   } else if (taskEdit && !addProject && !projectEdit && !addTask) {
