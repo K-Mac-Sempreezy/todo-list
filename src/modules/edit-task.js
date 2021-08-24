@@ -21,7 +21,6 @@ const taskFilterForCurrentPage = () => {
   } else if (currentPageView.type === 'Project') {
     tasks = projectTaskFilter(currentPageView.pageLabel);
   }
-  console.log(tasks);
   return tasks;
 };
 

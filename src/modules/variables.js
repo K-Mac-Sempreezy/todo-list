@@ -1,7 +1,7 @@
 import { Task, MenuElement } from './class-templates';
 import { createDropdownOptions } from './create-add-task-form.js';
 import { dateSelect } from './date';
-import { formatISO } from 'date-fns';
+import { format, formatISO } from 'date-fns';
 import { taskFilterForCurrentPage } from './edit-task.js';
 import { displayForm, handleView, findElementDataKey } from './update-UI';
 import {
@@ -83,7 +83,7 @@ const colorLists = {
 const defaultTasks = [
   new Task(
     formatISO(new Date()),
-    // time,
+    format(new Date(), 'p'),
     '12:30PM  Example Task',
     'Meet at favorite restaurant',
     '#48CFAD',
@@ -94,7 +94,7 @@ const defaultTasks = [
 
   new Task(
     formatISO(new Date()),
-    // time,
+    format(new Date(), 'p'),
     '2:30PM  Second Example Task',
     'Check in about new project',
     '#48CFAD',
@@ -153,7 +153,7 @@ const setProjectEdit = value => {
 
 const setMyProjectsIndex = (e) => {
   if (!e) {
-    myProjectsIndex = null;
+    let myProjectsIndex;
     setLocalStorage('myProjects', myProjects);
     return;
   }
@@ -165,7 +165,7 @@ const setMyProjectsIndex = (e) => {
 
 const setMyTasksIndex = e => {
   if (!e) {
-    myTasksIndex = null;
+    let myTasksIndex;
     setLocalStorage('myTasks', myTasks);
     return;
   }

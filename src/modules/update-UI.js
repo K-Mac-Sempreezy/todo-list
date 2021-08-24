@@ -36,6 +36,7 @@ import {
   projectName,
   setTaskEdit,
   taskEdit,
+  defaultTasks,
 } from './variables.js';
 import {
   svgInboxBig,
@@ -75,28 +76,27 @@ const toggleConfirm = e => {
   const text = document.getElementById('confirm-label');
 
   if (!popup.style.display) {
-    popup.style.display = 'none';k
+    popup.style.display = 'none';
   }
 
   if (id.includes('task')) {
     if (popup.style.display === 'none') {
       popup.style.display = 'flex';
       setMyTasksIndex(e);
+      setMyProjectsIndex();
+      console.log(isNaN(myProjectsIndex))
       text.textContent = 'Are you sure you want to delete this task?';
     }
   } else if (id.includes('project')) {
     if (popup.style.display === 'none') {
       popup.style.display = 'flex';
       setMyProjectsIndex(e);
+      setMyTasksIndex();
+      console.log(myProjectsIndex)
       text.textContent = `This will delete all tasks in project. Press delete to confirm.`;
     }
   } else if (id.includes('confirm')) {
     popup.style.display = 'none';
-    if (!!myProjectsIndex || !!myTasksIndex) {
-      return;
-    } else {
-      reset();
-    }
   }
 };
 
@@ -634,6 +634,8 @@ const reset = () => {
   updateMenuCount();
   updateProjectMenu();
   updateTaskContent();
+  setLocalStorage('myTasks', myTasks);
+  setLocalStorage('myProjects', myProjects);
 };
 
 const updateTaskContent = () => {
@@ -714,9 +716,9 @@ const clearForm = () => {
 };
 
 const deleteHandler = () => {
-  if (myProjectsIndex && !myTasksIndex) {
+  if (!isNaN(myProjectsIndex) && isNaN(myTasksIndex)) {
     deleteProject();
-  } else if (!myProjectsIndex && myTasksIndex) {
+  } else if (isNaN(myProjectsIndex) && !isNaN(myTasksIndex)) {
     deleteTask();
   }
 };
@@ -745,7 +747,12 @@ const deleteProject = () => {
 };
 
 const deleteTask = () => {
-  myTasks.splice(myTasksIndex, 1);
+  console.log(myTasksIndex)
+  if (myTasks.length <= 1) {
+    myTasks.splice(0, myTasks.length);
+  } else {
+    myTasks.splice(myTasksIndex, 1)
+  }
   reset();
 };
 
@@ -765,10 +772,11 @@ const initializeContent = () => {
   createDropdownOptions();
   updateProjectMenu();
 
-  if (isFirstTime.length <= 0) {
-    setIsFirstTime(false);
-  }
-  // createDefaultVariables();
+  // if (isFirstTime.length <= 0) {
+  //   setIsFirstTime(false);
+  //   defaultTasks.forEach(task => myTasks.push(task));
+  //   reset();
+  // } 
 };
 
 const toSpinalCase = string => {
