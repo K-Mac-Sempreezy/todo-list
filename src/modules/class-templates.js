@@ -25,7 +25,7 @@ class Task {
     priorityColor,
     categoryLabel,
     priorityLabel,
-    project = null,
+    project,
     priorityCircleFill = 'none',
     person = false,
     avatar = false

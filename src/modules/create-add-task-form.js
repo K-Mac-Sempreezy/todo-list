@@ -226,9 +226,6 @@ const createAddTaskForm = () => {
 };
 
 const createDropdownOptions = () => {
-  if (document.getElementById('category-0')) {
-    return;
-  }
 
   const categoryMenu = document.getElementById('option-menu-category');
   const priorityMenu = document.getElementById('option-menu-priority');
@@ -291,7 +288,7 @@ const createDropdownOptions = () => {
       click: handleOptionSelected,
     })
     
-    op.textContent = capitalizeFirstLetter(project.name);
+    op.textContent = project.name;
     projectMenu.appendChild(op);
   });
 };

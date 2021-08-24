@@ -7,6 +7,7 @@ import {
   toggleDescriptionPopup,
   populateDescriptionPopup,
   fillPriorityCircle,
+  toggleHelperBox,
 } from './update-UI.js';
 import {
   createElement,
@@ -169,9 +170,12 @@ const createTask = (task, index) => {
       class: 'icon delete',
       id: `task-delete-${index}`,
       'data-key': index,
+      'data-hover': 'delete task',
     },
     {
       click: [toggleConfirm, toggleOverlay],
+      // mouseover: toggleHelperBox,
+      // mouseleave: toggleHelperBox,
     }
   );
 

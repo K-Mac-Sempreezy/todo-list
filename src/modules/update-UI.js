@@ -51,6 +51,7 @@ import { format } from 'date-fns';
 import { dateSelect, getPickerValue, setPickerValue } from './date';
 import { createElementMenuProject } from './create-menu.js';
 import { createDropdownOptions } from './create-add-task-form.js';
+import { createElement } from './create-element.js';
 
 //
 //
@@ -347,10 +348,8 @@ const handleDeleteEditIconsOpacity0 = e => {
 };
 
 const populateForm = (objectCategory, number) => {
-  console.log(number)
   createDropdownOptions();
   let objectToEdit;
-  console.log({ objectCategory, number });
   if (objectCategory === 'Project') {
     objectToEdit = myProjects[number];
     let {
@@ -636,6 +635,7 @@ const reset = () => {
   updateTaskContent();
   setLocalStorage('myTasks', myTasks);
   setLocalStorage('myProjects', myProjects);
+  createDropdownOptions();
 };
 
 const updateTaskContent = () => {
@@ -727,7 +727,6 @@ const deleteProject = () => {
   const projectName = document.getElementById(
     `project-label-${myProjectsIndex}`
   ).textContent;
-  const projectsIndex = myProjects[myProjectsIndex];
 
   myTasks.forEach(task => {
     if (task.project === projectName) {
@@ -740,14 +739,13 @@ const deleteProject = () => {
   for (let i = myTasksToDelete.length - 1; i >= 0; i--) {
     myTasks.splice(myTasksToDelete[i], 1);
   }
-
-  myProjects.splice(projectsIndex, 1);
+  console.log(myProjectsIndex)
+  myProjects.splice(myProjectsIndex, 1);
 
   reset();
 };
 
 const deleteTask = () => {
-  console.log(myTasksIndex)
   if (myTasks.length <= 1) {
     myTasks.splice(0, myTasks.length);
   } else {
@@ -759,6 +757,25 @@ const deleteTask = () => {
 //
 //
 //Utility
+
+const toggleHelperBox = e => {
+  const hoverBox = document.getElementById('hover-helper-box');
+  if (hoverBox) {
+    hoverBox.remove();
+  } else {
+    if (e.target.dataset.hover) {
+      setTimeout(function () {
+        const hoverBox = createElement('div', {
+          id: 'hover-helper-box',
+          class: 'hover',
+        });
+        e.target.appendChild(hoverBox);
+        hoverBox.textContent = e.target.dataset.hover;
+        hoverBox.style.opacity = 1;
+      }, 2000);
+    }
+  }
+};
 
 const initializeContent = () => {
   setLocalStorage('myTasks', myTasks);
@@ -772,11 +789,11 @@ const initializeContent = () => {
   createDropdownOptions();
   updateProjectMenu();
 
-  // if (isFirstTime.length <= 0) {
-  //   setIsFirstTime(false);
-  //   defaultTasks.forEach(task => myTasks.push(task));
-  //   reset();
-  // } 
+  if (isFirstTime.length <= 0) {
+    setIsFirstTime(false);
+    defaultTasks.forEach(task => myTasks.push(task));
+    reset();
+  } 
 };
 
 const toSpinalCase = string => {
@@ -898,4 +915,5 @@ export {
   updateProjectMenu,
   updateMenuCount,
   reset,
+  toggleHelperBox,
 };

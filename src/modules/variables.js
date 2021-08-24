@@ -84,23 +84,23 @@ const defaultTasks = [
   new Task(
     formatISO(new Date()),
     format(new Date(), 'p'),
-    '12:30PM  Example Task',
+    'Example Task',
     'Meet at favorite restaurant',
-    '#48CFAD',
-    '#0000ff',
-    'Learning',
-    'None'
+    'hsla(163, 80%, 28%, 1)',
+    'hsla(36, 100%, 50%, 1)',
+    'hobby',
+    'medium'
   ),
 
   new Task(
     formatISO(new Date()),
     format(new Date(), 'p'),
-    '2:30PM  Second Example Task',
+    'Second Example Task',
     'Check in about new project',
-    '#48CFAD',
-    '#0000ff',
-    'Learning',
-    'None'
+    'hsla(339, 100%, 68%, 1)',
+    'hsla(358, 97%, 59%, 1)',
+    'learning',
+    'urgent'
   ),
 ];
 
