@@ -1,4 +1,4 @@
-import { setMyProjectsIndex, myTasks, myProjects } from './variables';
+import { setMyProjectsIndex, myTasks, myProjects, setLocalStorage } from './variables';
 import { populateForm } from './update-UI';
 import { formatISO } from 'date-fns';
 
