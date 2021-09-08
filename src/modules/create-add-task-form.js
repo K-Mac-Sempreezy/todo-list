@@ -10,7 +10,6 @@ import {
   submitHandler,
   toggleDropdownMenuDisplay,
   reset,
-  capitalizeFirstLetter,
   toggleClass,
 } from './update-UI.js';
 
